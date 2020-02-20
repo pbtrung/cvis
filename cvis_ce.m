@@ -72,6 +72,7 @@ function cvis_ce()
     v2 = var(e2,0,2);
     v./v1
     v./v2
+    v1./v2
     (v1-v2)./v1
     
     figure(1)
