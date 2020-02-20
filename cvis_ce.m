@@ -1,4 +1,4 @@
-function cvis_ce2()
+function cvis_ce()
     
     format long;
     % rng('default');
