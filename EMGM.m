@@ -32,7 +32,7 @@ Based on:
 R = initialization(X,nGM);
 %
 tol       = 1e-5;
-maxiter   = 500;
+maxiter   = 1000;
 llh       = -inf(1,maxiter);
 converged = false;
 t         = 1;

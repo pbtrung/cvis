@@ -16,8 +16,8 @@ function cvis_ce()
     v = var(Q(s(:))<0);
     prob1 = mean(Q1(s(:))<0);
     
-    a = linspace(-4,4,11);
-    ansamples = 1000;
+    a = [-1 0 2.5 2.75 3];
+    ansamples = 100000;
     e1(1:length(a),ansamples) = 0;
     e2(1:length(a),ansamples) = 0;
     wQs(1:length(a),ansamples) = 0;
@@ -28,7 +28,7 @@ function cvis_ce()
     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
 
     % CE method
-    N      = 5000;   % total number of samples for each level
+    N      = 5000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
     nsamples = 100000;
@@ -73,7 +73,7 @@ function cvis_ce()
     v./v1
     v./v2
     v1./v2
-    (v1-v2)./v1
+    
     
     figure(1)
     hold on
