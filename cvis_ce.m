@@ -3,6 +3,32 @@ function cvis_ce()
     format long;
     % rng('default');
     
+    E = 1.; 
+    nu = 0.3;
+    k=[ 1/2-nu/6   1/8+nu/8 -1/4-nu/12 -1/8+3*nu/8 ... 
+       -1/4+nu/12 -1/8-nu/8  nu/6       1/8-3*nu/8];
+    KE = E/(1-nu^2)*[ k(1) k(2) k(3) k(4) k(5) k(6) k(7) k(8)
+                      k(2) k(1) k(8) k(7) k(6) k(5) k(4) k(3)
+                      k(3) k(8) k(1) k(6) k(7) k(4) k(5) k(2)
+                      k(4) k(7) k(6) k(1) k(8) k(3) k(2) k(5)
+                      k(5) k(6) k(7) k(8) k(1) k(2) k(3) k(4)
+                      k(6) k(5) k(4) k(3) k(2) k(1) k(8) k(7)
+                      k(7) k(4) k(5) k(2) k(3) k(8) k(1) k(6)
+                      k(8) k(3) k(2) k(5) k(4) k(7) k(6) k(1)];
+                  
+    nelx = 60;
+    nely = 20;
+    dof = 2*(nely+1)*nelx+1;
+    force = -0.5;
+    U = FE(nelx,nely,KE,dof,force);
+    Ux = U(1:2:end);
+    Uy = U(2:2:end);
+    
+    x = linspace(0,nelx,nelx+1);
+    y = linspace(0,nely,nely+1);
+    [X,Y] = meshgrid(x,y);
+    plot (X(:)+Ux,Y(:)+Uy,'o','markersize',4,'markerfacecolor','black');
+    
 end
 
 function X = GM_sample(mu,Si,Pi,N)
