@@ -16,18 +16,35 @@ function cvis_ce()
                       k(7) k(4) k(5) k(2) k(3) k(8) k(1) k(6)
                       k(8) k(3) k(2) k(5) k(4) k(7) k(6) k(1)];
                   
-    nelx = 60;
-    nely = 20;
-    dof = 2*(nely+1)*nelx+1;
-    force = -0.5;
-    U = FE(nelx,nely,KE,dof,force);
-    Ux = U(1:2:end);
-    Uy = U(2:2:end);
+    nelx = 30;
+    nely = 10;
+    dof = 2*(nely+1)*nelx+2;
     
-    x = linspace(0,nelx,nelx+1);
-    y = linspace(0,nely,nely+1);
-    [X,Y] = meshgrid(x,y);
-    plot (X(:)+Ux,Y(:)+Uy,'o','markersize',4,'markerfacecolor','black');
+    nsamples = 1000000;
+    a = 0.1;
+    b = 0;
+    forces = a+(b-a)*rand(nsamples,1);
+    Ux(1:nsamples) = 0;
+    Uy(1:nsamples) = 0;
+    
+    parfor i = 1:nsamples
+        U = FE(nelx,nely,KE,dof,forces(i));
+%         Ux = U(1:2:end);
+%         Uy = U(2:2:end);
+        Ux(i) = U(dof-1);
+        Uy(i) = U(dof);
+    end
+    
+    mean(Ux)
+    my = mean(Uy)
+    
+    l = 2*my;
+    mean(l-Uy<0)
+    
+%     x = linspace(0,nelx,nelx+1);
+%     y = linspace(0,nely,nely+1);
+%     [X,Y] = meshgrid(x,y);
+%     plot (X(:)+Ux,Y(:)+Uy,'o','markersize',4,'markerfacecolor','black');
     
 end
 
