@@ -1,4 +1,4 @@
-function cvis_ce()
+function cvis_ce_err()
     
     format long;
     % rng('default');
@@ -16,32 +16,50 @@ function cvis_ce()
     v = var(Q(s(:))<0);
     prob1 = mean(Q1(s(:))<0);
     
-    a = linspace(-4,4,33);
     ansamples = 100000;
-    e1(1:length(a),ansamples) = 0;
-    e2(1:length(a),ansamples) = 0;
-    wQs(1:length(a),ansamples) = 0;
-    wQ1s(1:length(a),ansamples) = 0;
+    e1(1:ansamples) = 0;
+    e2(1:ansamples) = 0;
+    wQs(1:ansamples) = 0;
+    wQ1s(1:ansamples) = 0;
     
     % definition of the random variables
     d      = 1;
     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
-
+    
     % CE method
-    N      = 5000;    % total number of samples for each level
+    N = [1000 2000 5000 8000];
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
     nsamples = 100000;
-    
     % limit state function
     g = @(x) Q1(x);
-    [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init,mu,std);
     
-    for i = 1:length(a)
+    ansamples = 100000;
+    a(1:length(N)) = 0;
+    kldiv(1:length(N)) = 0;
+    e1(1:length(N),1:ansamples) = 0;
+    e2(1:length(N),1:ansamples) = 0;
+    wQs(1:length(N),1:ansamples) = 0;
+    wQ1s(1:length(N),1:ansamples) = 0;
+    
+    n1 = @(y) normpdf(y,mu,std);
+    m = @(y) (Q1(y)<0).*n1(y);
+    qopt = @(y) m(y)./prob1;
+    
+    for i = 1:length(N)
+        [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N(i),p,g,pi_pdf,k_init,mu,std);
+        gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
+        qce = @(y) pdf(gm,y);
+        
+        y = GM_sample(mu_hat,Si_hat,Pi_hat,10000000);
+        accepted = (Q1(y)<0) ~= 0;
+        s = y(accepted);
+        kldiv(i) = mean(log(qce(s))-log(qopt(s)));
+        
         parfor j = 1:ansamples
             samples = GM_sample(mu_hat,Si_hat,Pi_hat,nsamples);
             q = q_calc(samples,mu_hat,Si_hat,Pi_hat);
-
+            
             Qs = Q(samples(:))<0;
             Q1s = Q1(samples(:))<0;
             w = mvnpdf(samples,mu,std)./q;
@@ -50,39 +68,46 @@ function cvis_ce()
             wQ1s(i,j) = mean(w.*Q1s);
         end
     end
-    
+      
     e2 = wQs;
-    for i = 1:length(a)
+    v2 = var(e2,0,2);
+    for i = 1:length(N)
+        cov12 = cov(wQs(i,:),wQ1s(i,:));
+        a(i) = -cov12(1,2)/v2(i);
         e1(i,:) = wQs(i,:)+a(i)*(wQ1s(i,:)-prob1);
         corrcoef(wQs(i,:),wQ1s(i,:))
     end
+    v1 = var(e1,0,2);
     
     prob
     prob1
     
-    m1 = mean(e1,2);
-    m2 = mean(e2,2);
-    prob./m1
-    prob./m2
+    prob./mean(e1,2)
+    prob./mean(e2,2)
     
-    v1 = var(e1,0,2);
-    v2 = var(e2,0,2);
     v./v1
     v./v2
     v1./v2
     
     figure(1)
     hold on
-    plot(a,v1,'-o',a,v2,'--*')
-    legend('v1','v2')
-    xlabel('alpha')
+    plot(N,v1./v2,'-o')
+    legend('v1./v2')
+    xlabel('N')
     hold off
     
     figure(2)
     hold on
-    plot(a,log(v1),'-o',a,log(v2),'--*')
-    legend('log(v1)','log(v2)')
-    xlabel('alpha')
+    plot(N,log(v1./v2),'-o')
+    legend('log(v1./v2)')
+    xlabel('N')
+    hold off
+    
+    figure(3)
+    hold on
+    plot(N,kldiv,'-o')
+    legend('kldiv')
+    xlabel('N')
     hold off
     
 end
