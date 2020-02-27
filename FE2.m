@@ -1,5 +1,5 @@
 % FE-ANALYSIS
-function [U]=FE1(nelx,nely,dof,force)
+function [U]=FE2(nelx,nely,dof,force)
     E = 1.; 
     nu = 0.3;
     k=[ 1/2-nu/6   1/8+nu/8 -1/4-nu/12 -1/8+3*nu/8 ... 

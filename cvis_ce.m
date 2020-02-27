@@ -2,44 +2,35 @@ function cvis_ce()
     
     format long;
     % rng('default');
-    
-    E = 1.; 
-    nu = 0.3;
-    k=[ 1/2-nu/6   1/8+nu/8 -1/4-nu/12 -1/8+3*nu/8 ... 
-       -1/4+nu/12 -1/8-nu/8  nu/6       1/8-3*nu/8];
-    KE = E/(1-nu^2)*[ k(1) k(2) k(3) k(4) k(5) k(6) k(7) k(8)
-                      k(2) k(1) k(8) k(7) k(6) k(5) k(4) k(3)
-                      k(3) k(8) k(1) k(6) k(7) k(4) k(5) k(2)
-                      k(4) k(7) k(6) k(1) k(8) k(3) k(2) k(5)
-                      k(5) k(6) k(7) k(8) k(1) k(2) k(3) k(4)
-                      k(6) k(5) k(4) k(3) k(2) k(1) k(8) k(7)
-                      k(7) k(4) k(5) k(2) k(3) k(8) k(1) k(6)
-                      k(8) k(3) k(2) k(5) k(4) k(7) k(6) k(1)];
                   
-    nelx = 30;
-    nely = 10;
+    nelx = 60;
+    nely = 20;
     dof = 2*(nely+1)*nelx+2;
     
-    nsamples = 1000000;
-    a = 0.1;
-    b = 0;
-    forces = a+(b-a)*rand(nsamples,1);
-    Ux(1:nsamples) = 0;
-    Uy(1:nsamples) = 0;
+%     force = 0.01;
+%     U = FE(nelx,nely,dof,force);
+%     U(dof) 
+%     30x10 1.207661533265407
+%     60x20 1.228018816903080
     
-    parfor i = 1:nsamples
-        U = FE(nelx,nely,KE,dof,forces(i));
-%         Ux = U(1:2:end);
-%         Uy = U(2:2:end);
-        Ux(i) = U(dof-1);
-        Uy(i) = U(dof);
-    end
-    
-    mean(Ux)
-    my = mean(Uy)
-    
-    l = 2*my;
-    mean(l-Uy<0)
+%     nsamples = 1000000;
+%     a = 0.1;
+%     b = 0;
+%     forces = a+(b-a)*rand(nsamples,1);
+%     Ux(1:nsamples) = 0;
+%     Uy(1:nsamples) = 0;
+%     
+%     parfor i = 1:nsamples
+%         U = FE(nelx,nely,KE,dof,forces(i));
+%         Ux(i) = U(dof-1);
+%         Uy(i) = U(dof);
+%     end
+%     
+%     mean(Ux)
+%     my = mean(Uy)
+%     
+%     l = 2*my;
+%     mean(l-Uy<0)
     
 %     x = linspace(0,nelx,nelx+1);
 %     y = linspace(0,nely,nely+1);
