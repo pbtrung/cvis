@@ -2,41 +2,36 @@ function cvis_ce()
     
     format long;
     % rng('default');
-    
-    lx = 60;
-    ly = 20;
-    nelx = 60;
-    nely = 20;
+                  
+    nelx = 30;
+    nely = 10;
     dof = 2*(nely+1)*nelx+2;
-    KE = ElmStiffnessMatrix(lx,ly,nelx,nely);
-       
-%     force = 0.05;
-%     U = FE2(nelx,nely,dof,KE,force);
-%     U(dof)
+    KE = KE(lx,ly,nelx,nely)
     
+%     force = 0.01;
 %     U = FE1(nelx,nely,dof,force);
-%     U(dof)
-        
-    nsamples = 100000;
-    a = 0.1;
-    b = 0;
-    forces = a+(b-a)*rand(nsamples,1);
-    Ux(1:nsamples) = 0;
-    Uy(1:nsamples) = 0;
+%     U(dof) 
+%     30x10 1.207661533265407
+%     60x20 1.228018816903080
     
-    tic
-    parfor i = 1:nsamples
-        U = FE2(nelx,nely,dof,KE,forces(i));
-        Ux(i) = U(dof-1);
-        Uy(i) = U(dof);
-    end
-    toc
-    
-    mean(Ux)
-    my = mean(Uy)
-    
-    l = 1.995*my;
-    mean(l-Uy<0)
+%     nsamples = 1000000;
+%     a = 0.1;
+%     b = 0;
+%     forces = a+(b-a)*rand(nsamples,1);
+%     Ux(1:nsamples) = 0;
+%     Uy(1:nsamples) = 0;
+%     
+%     parfor i = 1:nsamples
+%         U = FE(nelx,nely,KE,dof,forces(i));
+%         Ux(i) = U(dof-1);
+%         Uy(i) = U(dof);
+%     end
+%     
+%     mean(Ux)
+%     my = mean(Uy)
+%     
+%     l = 2*my;
+%     mean(l-Uy<0)
     
 %     x = linspace(0,nelx,nelx+1);
 %     y = linspace(0,nely,nely+1);
@@ -45,8 +40,8 @@ function cvis_ce()
     
 end
 
-function KE = ElmStiffnessMatrix(lx,ly,nelx,nely)
-    E = 1.; 
+function KE = KE(lx,ly,nelx,nely)
+    E = 1; 
     nu = 0.3;
     h = 1;
     a = lx/nelx;
@@ -61,7 +56,7 @@ function KE = ElmStiffnessMatrix(lx,ly,nelx,nely)
         4*c+ka kb -4*c+ka/2 -kc -2*c-ka/2 -kb 2*c-ka kc
         kb 4/c+kd kc 2/c-kd -kb -2/c-kd/2 -kc -4/c+kd/2
         -4*c+ka/2 kc 4*c+ka -kb 2*c-ka -kc -2*c-ka/2 kb
-        -kc 2/c-kd -kb 4/c+kd kc -4/c+kd/2 kb -2/c-kd/2
+        -kc 2/2-kd -kb 4/c+kd kc -4/c+kd/2 kb -2/c-kd/2
         -2*c-ka/2 -kb 2*c-ka kc 4*c+ka kb -4*c+ka/2 -kc
         -kb -2/c-kd/2 -kc -4/c+kd/2 kb 4/c+kd kc 2/c-kd
         2*c-ka -kc -2*c-ka/2 kb -4*c+ka/2 kc 4*c+ka -kb

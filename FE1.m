@@ -1,6 +1,6 @@
 % FE-ANALYSIS
 function [U]=FE1(nelx,nely,dof,force)
-    E = 1.; 
+    E = 1.;
     nu = 0.3;
     k=[ 1/2-nu/6   1/8+nu/8 -1/4-nu/12 -1/8+3*nu/8 ... 
        -1/4+nu/12 -1/8-nu/8  nu/6       1/8-3*nu/8];
@@ -12,9 +12,9 @@ function [U]=FE1(nelx,nely,dof,force)
                       k(6) k(5) k(4) k(3) k(2) k(1) k(8) k(7)
                       k(7) k(4) k(5) k(2) k(3) k(8) k(1) k(6)
                       k(8) k(3) k(2) k(5) k(4) k(7) k(6) k(1)];
-
+    
     K = sparse(2*(nelx+1)*(nely+1),2*(nelx+1)*(nely+1));
-    F = sparse(2*(nely+1)*(nelx+1),1); 
+    F = sparse(2*(nely+1)*(nelx+1),1);
     U = zeros(2*(nely+1)*(nelx+1),1);
     for elx = 1:nelx
       for ely = 1:nely
