@@ -1,7 +1,7 @@
 function cvis_ce_err()
     
     format long;
-    % rng('default');
+    rng('default');
     
     mu = 0;
     std = 1;
@@ -54,7 +54,9 @@ function cvis_ce_err()
         y = GM_sample(mu_hat,Si_hat,Pi_hat,10000000);
         accepted = (Q1(y)<0) ~= 0;
         s = y(accepted);
-        kldiv(i) = mean(log(qce(s))-log(qopt(s)));
+        kldiv(i) = mean(log(qce(s))-log(qopt(s)))
+        
+        % integral(@(y) qce(y).*(log(qce(y))-log(qopt(y))),-Inf,Inf,'ArrayValued',true,'RelTol',0,'AbsTol',1e-12)
         
         parfor j = 1:ansamples
             samples = GM_sample(mu_hat,Si_hat,Pi_hat,nsamples);

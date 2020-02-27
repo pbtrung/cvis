@@ -1,7 +1,7 @@
 function cvis_ce()
     
     format long;
-    % rng('default');
+    rng('default');
     
     mu = 0;
     std = 1;
