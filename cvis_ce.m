@@ -1,52 +1,139 @@
 function cvis_ce()
     
     format long;
-    % rng('default');
+    rng('default');
     
     lx = 60;
     ly = 20;
     nelx = 60;
     nely = 20;
-    dof = 2*(nely+1)*nelx+2;
-    KE = ElmStiffnessMatrix(lx,ly,nelx,nely);
-       
-%     force = 0.05;
-%     U = FE2(nelx,nely,dof,KE,force);
-%     U(dof)
+    nelx1 = 30;
+    nely1 = 10;
+    mu = 0;
+    sigma = 1;
+    nsamples = 1000000;
+    [EQ,EQ1,VQ] = EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,nsamples,mu,sigma)
+
+%     EQ = 0.0028;
+%     EQ1 = 0.0375;
+%     VQ = 0.002792439243924;
+%     l = 3.515471021058248e+02;
+%     l1 = 2.160746167433388e+02;
+%     
+%     KE = ElmStiffnessMatrix(lx,ly,nelx,nely);
+%     KE1 = ElmStiffnessMatrix(lx,ly,nelx1,nely1);
+%     dof = 2*(nely+1)*nelx+2;
+%     dof1 = 2*(nely1+1)*nelx1+2;
+%     
+%     Qx = @(x) l-FE3(nelx,nely,dof,KE,x);
+%     Q1y = @(y) l1-FE3(nelx1,nely1,dof1,KE1,y);
+%     select = @(v,idx) v(idx,:);
+%     Q = @(x) select(Qx(x),dof)';
+%     Q1 = @(y) select(Q1y(y),dof1)';
+%     
+%     % alpha = linspace(-1,0,2);
+%     alpha = [-1 0 1];
+%     ansamples = 10000;
+%     e1(1:length(alpha),ansamples) = 0;
+%     e2(1:length(alpha),ansamples) = 0;
+%     wQs(1:length(alpha),ansamples) = 0;
+%     wQ1s(1:length(alpha),ansamples) = 0;
+%     
+%     % definition of the random variables
+%     d      = 1;
+%     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
+% 
+%     % CE method
+%     N      = 5000;    % total number of samples for each level
+%     p      = 0.1;     % quantile value to select samples for parameter update
+%     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
+%     
+%     % limit state function
+%     g = @(x) Q(x);
+%     [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init,mu,sigma);
     
-%     U = FE1(nelx,nely,dof,force);
-%     U(dof)
-        
-    nsamples = 100000;
-    a = 0.1;
-    b = 0;
-    forces = a+(b-a)*rand(nsamples,1);
-    Ux(1:nsamples) = 0;
-    Uy(1:nsamples) = 0;
-    
-    tic
-    parfor i = 1:nsamples
-        U = FE2(nelx,nely,dof,KE,forces(i));
-        Ux(i) = U(dof-1);
-        Uy(i) = U(dof);
-    end
-    toc
-    
-    mean(Ux)
-    my = mean(Uy)
-    
-    l = 1.995*my;
-    mean(l-Uy<0)
-    
-%     x = linspace(0,nelx,nelx+1);
-%     y = linspace(0,nely,nely+1);
-%     [X,Y] = meshgrid(x,y);
-%     plot (X(:)+Ux,Y(:)+Uy,'o','markersize',4,'markerfacecolor','black');
+%     for i = 1:length(alpha)
+%         parfor j = 1:ansamples
+%             display('alpha: '+alpha(i)+' '+'iter: '+j);
+%             samples = GM_sample(mu_hat,Si_hat,Pi_hat,nsamples);
+%             q = q_calc(samples,mu_hat,Si_hat,Pi_hat);
+% 
+%             Qs = Q(samples(:))<0;
+%             Q1s = Q1(samples(:))<0;
+%             w = mvnpdf(samples,mu,sigma)./q;
+% 
+%             wQs(i,j) = mean(w.*Qs);
+%             wQ1s(i,j) = mean(w.*Q1s);
+%         end
+%     end
+%     
+%     e2 = wQs;
+%     for i = 1:length(alpha)
+%         e1(i,:) = wQs(i,:)+alpha(i)*(wQ1s(i,:)-EQ1);
+%         corrcoef(wQs(i,:),wQ1s(i,:))
+%     end
+%     
+%     EQ
+%     EQ1
+%     
+%     m1 = mean(e1,2);
+%     m2 = mean(e2,2);
+%     EQ./m1
+%     EQ./m2
+%     
+%     v1 = var(e1,0,2);
+%     v2 = var(e2,0,2);
+%     VQ./v1
+%     VQ./v2
+%     v1./v2
+%     
+%     figure(1)
+%     hold on
+%     plot(alpha,v1,'-o',alpha,v2,'--*')
+%     legend('v1','v2')
+%     xlabel('alpha')
+%     hold off
+%     
+%     figure(2)
+%     hold on
+%     plot(alpha,log(v1),'-o',alpha,log(v2),'--*')
+%     legend('log(v1)','log(v2)')
+%     xlabel('alpha')
+%     hold off
     
 end
 
+function [EQ,EQ1,VQ] = EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,nsamples,mu,sigma)
+    forces = mvnrnd(mu,sigma,nsamples);
+    Uy(1:nsamples) = 0;
+    
+    dof = 2*(nely+1)*nelx+2;
+    KE = ElmStiffnessMatrix(lx,ly,nelx,nely);
+    parfor i = 1:nsamples
+        U = FE2(nelx,nely,dof,KE,forces(i));
+        Uy(i) = U(dof);
+    end
+    m = max(Uy);
+    my = mean(Uy);
+    l = 0.8*m
+    EQ = mean(l-Uy<0);
+    VQ = var(l-Uy<0);
+    
+    Uy(1:nsamples) = 0;
+    dof = 2*(nely1+1)*nelx1+2;
+    KE = ElmStiffnessMatrix(lx,ly,nelx1,nely1);
+    parfor i = 1:nsamples
+        U = FE2(nelx1,nely1,dof,KE,forces(i));
+        Uy(i) = U(dof);
+    end
+    m = max(Uy);
+    my = mean(Uy);
+    l = 0.5*m
+    EQ1 = mean(l-Uy<0);
+end
+
 function KE = ElmStiffnessMatrix(lx,ly,nelx,nely)
-    E = 1.; 
+    E = 1.;
     nu = 0.3;
     h = 1;
     a = lx/nelx;
