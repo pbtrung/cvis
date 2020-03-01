@@ -11,95 +11,100 @@ function cvis_ce()
     nely1 = 10;
     mu = 0;
     sigma = 1;
-    nsamples = 1000000;
-    [EQ,EQ1,VQ] = EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,nsamples,mu,sigma)
+%     nsamples = 1000000;
+%     [EQ,EQ1,VQ] = EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,nsamples,mu,sigma)
 
-%     EQ = 0.0028;
-%     EQ1 = 0.0375;
-%     VQ = 0.002792439243924;
-%     l = 3.515471021058248e+02;
-%     l1 = 2.160746167433388e+02;
-%     
-%     KE = ElmStiffnessMatrix(lx,ly,nelx,nely);
-%     KE1 = ElmStiffnessMatrix(lx,ly,nelx1,nely1);
-%     dof = 2*(nely+1)*nelx+2;
-%     dof1 = 2*(nely1+1)*nelx1+2;
-%     
-%     Qx = @(x) l-FE3(nelx,nely,dof,KE,x);
-%     Q1y = @(y) l1-FE3(nelx1,nely1,dof1,KE1,y);
-%     select = @(v,idx) v(idx,:);
-%     Q = @(x) select(Qx(x),dof)';
-%     Q1 = @(y) select(Q1y(y),dof1)';
-%     
-%     % alpha = linspace(-1,0,2);
-%     alpha = [-1 0 1];
-%     ansamples = 10000;
-%     e1(1:length(alpha),ansamples) = 0;
-%     e2(1:length(alpha),ansamples) = 0;
-%     wQs(1:length(alpha),ansamples) = 0;
-%     wQ1s(1:length(alpha),ansamples) = 0;
-%     
-%     % definition of the random variables
-%     d      = 1;
-%     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
-% 
-%     % CE method
-%     N      = 5000;    % total number of samples for each level
-%     p      = 0.1;     % quantile value to select samples for parameter update
-%     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
-%     
-%     % limit state function
-%     g = @(x) Q(x);
-%     [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init,mu,sigma);
+    EQ = 0.001251;
+    EQ1 = 0.031769;
+    VQ = 0.001249436248438;
+    l = 3.705226467613969e+02;
+    l1 = 2.242340722569870e+02;
     
-%     for i = 1:length(alpha)
-%         parfor j = 1:ansamples
-%             display('alpha: '+alpha(i)+' '+'iter: '+j);
-%             samples = GM_sample(mu_hat,Si_hat,Pi_hat,nsamples);
-%             q = q_calc(samples,mu_hat,Si_hat,Pi_hat);
-% 
-%             Qs = Q(samples(:))<0;
-%             Q1s = Q1(samples(:))<0;
-%             w = mvnpdf(samples,mu,sigma)./q;
-% 
-%             wQs(i,j) = mean(w.*Qs);
-%             wQ1s(i,j) = mean(w.*Q1s);
-%         end
-%     end
-%     
-%     e2 = wQs;
-%     for i = 1:length(alpha)
-%         e1(i,:) = wQs(i,:)+alpha(i)*(wQ1s(i,:)-EQ1);
-%         corrcoef(wQs(i,:),wQ1s(i,:))
-%     end
-%     
-%     EQ
-%     EQ1
-%     
-%     m1 = mean(e1,2);
-%     m2 = mean(e2,2);
-%     EQ./m1
-%     EQ./m2
-%     
-%     v1 = var(e1,0,2);
-%     v2 = var(e2,0,2);
-%     VQ./v1
-%     VQ./v2
-%     v1./v2
-%     
-%     figure(1)
-%     hold on
-%     plot(alpha,v1,'-o',alpha,v2,'--*')
-%     legend('v1','v2')
-%     xlabel('alpha')
-%     hold off
-%     
-%     figure(2)
-%     hold on
-%     plot(alpha,log(v1),'-o',alpha,log(v2),'--*')
-%     legend('log(v1)','log(v2)')
-%     xlabel('alpha')
-%     hold off
+    KE = ElmStiffnessMatrix(lx,ly,nelx,nely);
+    KE1 = ElmStiffnessMatrix(lx,ly,nelx1,nely1);
+    dof = 2*(nely+1)*nelx+2;
+    dof1 = 2*(nely1+1)*nelx1+2;
+    
+    Qx = @(x) l-FE3(nelx,nely,dof,KE,x);
+    Q1y = @(y) l1-FE3(nelx1,nely1,dof1,KE1,y);
+    select = @(v,idx) v(idx,:);
+    Q = @(x) select(Qx(x),dof)';
+    Q1 = @(y) select(Q1y(y),dof1)';
+    
+    alpha = linspace(-4,4,33);
+    ansamples = 1000;
+    e1(1:length(alpha),ansamples) = 0;
+    e2(1:length(alpha),ansamples) = 0;
+    wQs(1:length(alpha),ansamples) = 0;
+    wQ1s(1:length(alpha),ansamples) = 0;
+    
+    % definition of the random variables
+    d      = 1;
+    pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
+
+    % CE method
+    N      = 5000;    % total number of samples for each level
+    p      = 0.1;     % quantile value to select samples for parameter update
+    k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
+    nsamples = 10000;
+    % nsamples=10000 needs 110s per core
+    % ansamples=1000 and nsamples=10000 needs 10 hours
+    
+    % limit state function
+    g = @(x) Q1(x);
+    [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init,mu,sigma);
+    
+    tic
+    for i = 1:length(alpha)
+        parfor j = 1:ansamples
+            fprintf('alpha: %f, iter: %d\n',alpha(i),j);
+            samples = GM_sample(mu_hat,Si_hat,Pi_hat,nsamples);
+            q = q_calc(samples,mu_hat,Si_hat,Pi_hat);
+
+            Qs = Q(samples(:))<0;
+            Q1s = Q1(samples(:))<0;
+            w = mvnpdf(samples,mu,sigma)./q;
+
+            wQs(i,j) = mean(w.*Qs);
+            wQ1s(i,j) = mean(w.*Q1s);
+        end
+        fprintf('alpha: %f, time: %f\n',alpha(i),toc);
+    end
+    fprintf('finish: %f\n',toc);
+    
+    e2 = wQs;
+    for i = 1:length(alpha)
+        e1(i,:) = wQs(i,:)+alpha(i)*(wQ1s(i,:)-EQ1);
+        corrcoef(wQs(i,:),wQ1s(i,:))
+    end
+    
+    EQ
+    EQ1
+    
+    m1 = mean(e1,2);
+    m2 = mean(e2,2);
+    EQ./m1
+    EQ./m2
+    
+    v1 = var(e1,0,2);
+    v2 = var(e2,0,2);
+    VQ./v1
+    VQ./v2
+    v1./v2
+    
+    figure(1)
+    hold on
+    plot(alpha,v1,'-o',alpha,v2,'--*')
+    legend('v1','v2')
+    xlabel('alpha')
+    hold off
+    
+    figure(2)
+    hold on
+    plot(alpha,log(v1),'-o',alpha,log(v2),'--*')
+    legend('log(v1)','log(v2)')
+    xlabel('alpha')
+    hold off
     
 end
 
@@ -115,7 +120,7 @@ function [EQ,EQ1,VQ] = EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,nsamples,mu,sigma)
     end
     m = max(Uy);
     my = mean(Uy);
-    l = 0.8*m
+    l = 0.65*m
     EQ = mean(l-Uy<0);
     VQ = var(l-Uy<0);
     
@@ -128,7 +133,7 @@ function [EQ,EQ1,VQ] = EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,nsamples,mu,sigma)
     end
     m = max(Uy);
     my = mean(Uy);
-    l = 0.5*m
+    l = 0.4*m
     EQ1 = mean(l-Uy<0);
 end
 
