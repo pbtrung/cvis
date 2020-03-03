@@ -32,7 +32,7 @@ function cvis_ce()
     Q1 = @(y) select(Q1y(y),dof1)';
     
     alpha = linspace(-4,4,33);
-    ansamples = 1000;
+    ansamples = 100;
     e1(1:length(alpha),ansamples) = 0;
     e2(1:length(alpha),ansamples) = 0;
     wQs(1:length(alpha),ansamples) = 0;
@@ -48,7 +48,6 @@ function cvis_ce()
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
     nsamples = 10000;
     % nsamples=10000 needs 110s per core
-    % ansamples=1000 and nsamples=10000 needs 10 hours
     
     % limit state function
     g = @(x) Q1(x);
