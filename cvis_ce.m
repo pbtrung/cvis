@@ -46,7 +46,7 @@ function cvis_ce()
     N      = 5000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
-    nsamples = 10000;
+    nsamples = 10000;   
     % nsamples=10000 needs 110s per core
     
     % limit state function
