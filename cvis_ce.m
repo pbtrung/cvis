@@ -5,19 +5,26 @@ function cvis_ce()
     
     mu = 0;
     std = 1;
-    l = mu+3*std;
-    l1 = mu+2*std;
+    b = 3;
+    b1 = 2;
+    l = mu+b*std;
+    l1 = mu+b1*std;
     
     Q = @(x) l-x;
     Q1 = @(y) l1-y;
     
-    s = mvnrnd(mu,std,10000000);
-    prob = mean(Q(s(:))<0);
-    v = var(Q(s(:))<0);
-    prob1 = mean(Q1(s(:))<0);
+    vs = 100000;
+    mc(1:vs) = 0;
+    parfor i = 1:vs
+        s = mvnrnd(mu,std,1000000);
+        mc(i) = mean(Q(s(:))<0);
+    end
+    v = var(mc)
+    prob = 1-normcdf(b)
+    prob1 = 1-normcdf(b1)
     
     a = linspace(-4,4,33);
-    ansamples = 100000;
+    ansamples = 10000;
     e1(1:length(a),ansamples) = 0;
     e2(1:length(a),ansamples) = 0;
     wQs(1:length(a),ansamples) = 0;
@@ -37,6 +44,31 @@ function cvis_ce()
     g = @(x) Q1(x);
     [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init,mu,std);
     
+%     X = linspace(0,5,1000)';
+%     N = size(X,1);
+%     h_pre = zeros(N,size(Pi_hat,1));
+%     for q = 1:size(Pi_hat,1)
+%         h_pre(:,q) = Pi_hat(q)*mvnpdf(X,mu_hat(q,:),Si_hat(:,:,q));
+%     end
+%     h = sum(h_pre,2);
+%     
+%     k = (Q(X)<0).*mvnpdf(X,mu,std)/prob;
+%     
+%     figure(1)
+%     hold on
+%     plot(X,h,'-o',X,k,'--*')
+%     legend('h','k')
+%     hold off
+%     
+%     samples = GM_sample(mu_hat,Si_hat,Pi_hat,100);
+%       
+%     subplot(1,2,1)
+%     plot(X,h,'-o',X,k,'--*')
+%     legend('h','k')
+%     
+%     subplot(1,2,2)
+%     hist(samples,100)
+
     for i = 1:length(a)
         parfor j = 1:ansamples
             samples = GM_sample(mu_hat,Si_hat,Pi_hat,nsamples);
@@ -56,7 +88,7 @@ function cvis_ce()
         e1(i,:) = wQs(i,:)+a(i)*(wQ1s(i,:)-prob1);
         corrcoef(wQs(i,:),wQ1s(i,:))
     end
-    
+      
     prob
     prob1
     
@@ -65,8 +97,8 @@ function cvis_ce()
     prob./m1
     prob./m2
     
-    v1 = var(e1,0,2);
-    v2 = var(e2,0,2);
+    v1 = var(e1,0,2)
+    v2 = var(e2,0,2)
     v./v1
     v./v2
     v1./v2
@@ -84,6 +116,13 @@ function cvis_ce()
     legend('log(v1)','log(v2)')
     xlabel('alpha')
     hold off
+    
+    astar(1:length(a)) = 0;
+    parfor i = 1:length(a)
+        cov01 = cov(wQs(i,:),wQ1s(i,:));
+        astar(i) = -cov01(1,2)/v2(i);
+    end
+    astar
     
 end
 
