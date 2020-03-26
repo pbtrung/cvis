@@ -1,26 +1,31 @@
 function cvis_ce_err()
     
     format long;
-    rng('default');
+    % rng('default');
     
     mu = 0;
     std = 1;
-    l = mu+3*std;
-    l1 = mu+2*std;
+    b = 3;
+    b1 = 2;
+    l = mu+b*std;
+    l1 = mu+b1*std;
     
     Q = @(x) l-x;
     Q1 = @(y) l1-y;
     
-    s = mvnrnd(mu,std,10000000);
-    prob = mean(Q(s(:))<0);
-    v = var(Q(s(:))<0);
-    prob1 = mean(Q1(s(:))<0);
-    
-    ansamples = 100000;
-    e1(1:ansamples) = 0;
-    e2(1:ansamples) = 0;
-    wQs(1:ansamples) = 0;
-    wQ1s(1:ansamples) = 0;
+%     vs = 100000;
+%     mc(1:vs) = 0;
+%     parfor i = 1:vs
+%         s = mvnrnd(mu,std,1000000);
+%         mc(i) = mean(Q(s(:))<0);
+%     end
+%     v = var(mc)
+%     prob = 1-normcdf(b)
+%     prob1 = 1-normcdf(b1)
+
+    v = 1.352806663625048e-09;
+    prob = 0.001349898031630;
+    prob1 = 0.022750131948179;
     
     % definition of the random variables
     d      = 1;
@@ -34,7 +39,7 @@ function cvis_ce_err()
     % limit state function
     g = @(x) Q1(x);
     
-    ansamples = 100000;
+    ansamples = 10000;
     a(1:length(N)) = 0;
     kldiv(1:length(N)) = 0;
     e1(1:length(N),1:ansamples) = 0;
@@ -54,7 +59,7 @@ function cvis_ce_err()
         y = GM_sample(mu_hat,Si_hat,Pi_hat,10000000);
         accepted = (Q1(y)<0) ~= 0;
         s = y(accepted);
-        kldiv(i) = mean(log(qce(s))-log(qopt(s)))
+        kldiv(i) = mean(log(qce(s))-log(qopt(s)));
         
         % integral(@(y) qce(y).*(log(qce(y))-log(qopt(y))),-Inf,Inf,'ArrayValued',true,'RelTol',0,'AbsTol',1e-12)
         
@@ -83,6 +88,10 @@ function cvis_ce_err()
     
     prob
     prob1
+    v1
+    v2
+    a
+    kldiv
     
     prob./mean(e1,2)
     prob./mean(e2,2)
