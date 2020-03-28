@@ -10,30 +10,23 @@ function cvis_rs()
     
     Q = @(x) l-x;
     Q1 = @(y) l1-y;
+
+    v = 1.352806663625048e-09;
+    prob = 0.001349898031630;
+    prob1 = 0.022750131948179;
     
-    vs = 1000;
-    mc(1:vs) = 0;
-    mc1(1:vs) = 0;
-    parfor i = 1:vs
-        s = mvnrnd(mu,std,1000000);
-        mc(i) = mean(Q(s(:))<0);
-        mc1(i) = mean(Q1(s(:))<0);
-    end
-    prob = mean(mc);
-    v = var(mc);
-    prob1 = mean(mc1);
-    
-    a = linspace(-1,0,3);
-    ansamples = 10000;
+    a = linspace(-4,4,10);
+    ansamples = 1000;
     e1(1:length(a),ansamples) = 0;
     e2(1:length(a),ansamples) = 0;
     wQs(1:length(a),ansamples) = 0;
     wQ1s(1:length(a),ansamples) = 0;
+    vals(1:length(a),ansamples) = 0;
     
     nsamples = 100000;
     umin = 0;
-    umax = 6;
-    q = @(x) (Q1(x)<0).*mvnpdf(x,mu,std)./prob1;
+    umax = 7;
+    q = @(x) ((Q1(x)<0).*normpdf(x))/prob1;
     
     for i = 1:length(a)
         parfor j = 1:ansamples
@@ -46,10 +39,12 @@ function cvis_rs()
             
             Qs = Q(samples(:))<0;
             Q1s = Q1(samples(:))<0;
-            w = mvnpdf(samples,mu,std)./q(samples);
+            w = normpdf(samples)./q(samples);
 
             wQs(i,j) = mean(w.*Qs);
             wQ1s(i,j) = mean(w.*Q1s);
+            
+            vals(i,j) = wQs(i,j)+a(i)*(wQ1s(i,j)-prob1);
         end
     end
     
@@ -84,6 +79,12 @@ function cvis_rs()
     hold on
     plot(a,log(v1),'-o',a,log(v2),'--*')
     legend('log(v1)','log(v2)')
+    xlabel('alpha')
+    hold off
+    
+    figure(3)
+    hold on
+    plot(a,var(vals,0,2))
     xlabel('alpha')
     hold off
     

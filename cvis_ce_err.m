@@ -39,7 +39,7 @@ function cvis_ce_err()
     % limit state function
     g = @(x) Q1(x);
     
-    ansamples = 10000;
+    ansamples = 1000;
     a(1:length(N)) = 0;
     kldiv(1:length(N)) = 0;
     e1(1:length(N),1:ansamples) = 0;
@@ -50,16 +50,25 @@ function cvis_ce_err()
     n1 = @(y) normpdf(y,mu,std);
     m = @(y) (Q1(y)<0).*n1(y);
     qopt = @(y) m(y)./prob1;
+    umin = 0;
+    umax = 7;
+    nrs = 10000000;
     
     for i = 1:length(N)
         [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N(i),p,g,pi_pdf,k_init,mu,std);
         gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
         qce = @(y) pdf(gm,y);
         
-        y = GM_sample(mu_hat,Si_hat,Pi_hat,10000000);
-        accepted = (Q1(y)<0) ~= 0;
-        s = y(accepted);
-        kldiv(i) = mean(log(qce(s))-log(qopt(s)));
+%         y = GM_sample(mu_hat,Si_hat,Pi_hat,10000000);
+%         accepted = (Q1(y)<0) ~= 0;
+%         s = y(accepted);
+        u = umin+(umax-umin)*rand(nrs,1);
+        sample_value = qopt(u);
+        max_value = max(sample_value);
+        accepted = rand(nrs,1)<(sample_value/max_value);
+        s = u(accepted,:);
+        length(s)
+        kldiv(i) = mean(log(qopt(s(:)))-log(qce(s(:))))
         
         % integral(@(y) qce(y).*(log(qce(y))-log(qopt(y))),-Inf,Inf,'ArrayValued',true,'RelTol',0,'AbsTol',1e-12)
         
