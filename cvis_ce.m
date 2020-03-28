@@ -137,21 +137,21 @@ function cvis_ce()
     figure(1)
     hold on
     plot(a,v1,'-o',a,v2,'--*')
-    legend('v1','v2')
+    legend('v_0','v_1')
     xlabel('alpha')
     hold off
     
     figure(2)
     hold on
     plot(a,log(v1),'-o',a,log(v2),'--*')
-    legend('log(v1)','log(v2)')
+    legend('ln(v_0)','ln(v_1)')
     xlabel('alpha')
     hold off
     
     figure(3)
     hold on
     plot(a,v1./v2,'-o',a,ones(1,length(a)),'--')
-    legend('v1./v2')
+    legend('v_0/v_1')
     xlabel('alpha')
     hold off
     

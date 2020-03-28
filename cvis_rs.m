@@ -71,14 +71,14 @@ function cvis_rs()
     figure(1)
     hold on
     plot(a,v1,'-o',a,v2,'--*')
-    legend('v1','v2')
+    legend('v_0','v_1')
     xlabel('alpha')
     hold off
     
     figure(2)
     hold on
     plot(a,log(v1),'-o',a,log(v2),'--*')
-    legend('log(v1)','log(v2)')
+    legend('log(v_0)','log(v_1)')
     xlabel('alpha')
     hold off
     
