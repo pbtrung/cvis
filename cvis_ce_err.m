@@ -62,15 +62,20 @@ function cvis_ce_err()
 %         y = GM_sample(mu_hat,Si_hat,Pi_hat,10000000);
 %         accepted = (Q1(y)<0) ~= 0;
 %         s = y(accepted);
-        u = umin+(umax-umin)*rand(nrs,1);
-        sample_value = qopt(u);
-        max_value = max(sample_value);
-        accepted = rand(nrs,1)<(sample_value/max_value);
-        s = u(accepted,:);
-        length(s)
-        kldiv(i) = mean(log(qopt(s(:)))-log(qce(s(:))))
         
-        % integral(@(y) qce(y).*(log(qce(y))-log(qopt(y))),-Inf,Inf,'ArrayValued',true,'RelTol',0,'AbsTol',1e-12)
+        vs = 1000;
+        mc(1:vs) = 0;
+        parfor k = 1:vs
+            u = umin+(umax-umin)*rand(nrs,1);
+            sample_value = qopt(u);
+            max_value = max(sample_value);
+            accepted = rand(nrs,1)<(sample_value/max_value);
+            s = u(accepted,:);
+            mc(k) = mean(log(qopt(s(:)))-log(qce(s(:))));
+        end
+        kldiv(i) = mean(mc)
+        
+%         integral(@(y) qopt(y).*(log(qopt(y))-log(qce(y))),-Inf,Inf,'ArrayValued',true,'RelTol',0,'AbsTol',1e-9)
         
         parfor j = 1:ansamples
             samples = random(gm,nsamples);
