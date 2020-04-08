@@ -108,7 +108,6 @@ function cvis_ce()
     e2 = wQs;
     for i = 1:length(a)
         e1(i,:) = wQs(i,:)+a(i)*(wQ1s(i,:)-prob1);
-        corrcoef(wQs(i,:),wQ1s(i,:))
     end
       
     prob
@@ -121,19 +120,22 @@ function cvis_ce()
     display('prob./m2')
     prob./m2
     
-    v1 = var(e1,0,2)
-    v2 = var(e2,0,2)
+    v2 = var(e2,0,2);
+    v1(1:length(a)) = 0;
+    for i = 1:length(a)
+        covar = cov(wQs(i,:),wQ1s(i,:));
+        v1(i) = v2(i)+a(i)^2*var(wQ1s(i,:))+2*a(i)*covar(1,2);
+        corrcoef(wQs(i,:),wQ1s(i,:))
+    end
+    v1 = v1'
+    v2
     display('v./v1')
     v./v1
     display('v./v2')
     v./v2
     display('v1./v2')
     v1./v2
-    
-%     t1 = var(wQs,0,2)
-%     t2 = var(wQ1s,0,2)
-%     t3 = cov(wQs(1,:),wQ1s(1,:))
-    
+     
     figure(1)
     hold on
     plot(a,v1,'-o',a,v2,'--*')
