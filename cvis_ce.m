@@ -96,6 +96,8 @@ function cvis_ce()
         corrcoef(wQs(i,:),wQ1s(i,:))
     end
     
+    v1 = v1'
+    v2
     display('VQ./v1')
     VQ./v1
     display('VQ./v2')
