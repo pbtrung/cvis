@@ -38,8 +38,8 @@ function cvis_rs()
         max_value = max(sample_value);
         accepted = rand(nsamples,1)<(sample_value/max_value);
         samples = u(accepted,:);
-        if length(samples) < 500
-            error('length(samples) < 500');
+        if length(samples) < 200
+            error('length(samples) < 200');
         end
         
         Q0s = Q0(samples(:))<0;

@@ -1,7 +1,12 @@
 function cvis_rs_tols()
     
+    dfile = '~/results.txt';
+    if exist(dfile, 'file') 
+        delete(dfile); 
+    end
+    diary(dfile);
+    
     format long;
-    diary '~/results.txt';
     rng('default');
     
     mu = 0;
@@ -29,6 +34,7 @@ function cvis_rs_tols()
     
     tol = [0 0.1 0.2 0.4 0.6 0.8 1 1.2];
     min_ve_v0(1:length(tol)) = 0;
+    astar(1:length(tol)) = 0;
     
     for r = 1:length(tol)
         
@@ -80,7 +86,9 @@ function cvis_rs_tols()
         display('ve./v0')
         ve'./v0
         
-        min_ve_v0(r) = min(ve./v0)
+        astar(r) = -covar(1,2)/v1;
+        astar(2:end)
+        min_ve_v0(r) = (v0+astar(r)^2*v1+2*astar(r)*covar(1,2))/v0
     
     end
     
