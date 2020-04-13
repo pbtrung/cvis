@@ -1,4 +1,4 @@
-function cvis_rs()
+function cvis_rs_tols()
     
     format long;
     rng('default');

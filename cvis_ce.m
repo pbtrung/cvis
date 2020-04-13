@@ -5,163 +5,133 @@ function cvis_ce()
     
     mu = 0;
     std = 1;
-    b = 3;
-    b1 = 2;
-    l = mu+b*std;
-    l1 = mu+b1*std;
+    w0 = 3;
+    w1 = 2;
+    l0 = mu+w0*std;
+    l1 = mu+w1*std;
     
-    Q = @(x) l-x;
-    Q1 = @(y) l1-y;
-    
-%     vs = 100000;
-%     mc(1:vs) = 0;
-%     parfor i = 1:vs
-%         s = mvnrnd(mu,std,1000000);
-%         mc(i) = mean(Q(s(:))<0);
-%     end
-%     v = var(mc)
-%     prob = 1-normcdf(b)
-%     prob1 = 1-normcdf(b1)
+    Q0 = @(x) l0-x;
+    Q1 = @(x) l1-x;
 
     v = 1.352806663625048e-09;
-    prob = 0.001349898031630;
-    prob1 = 0.022750131948179;
+    prob0 = 0.001349898031630;
+    prob1 = 1-normcdf(w1);
     
-    a = linspace(-4,4,33);
+    a = linspace(-2,2,33);
     ansamples = 100000;
-    e1(1:length(a),ansamples) = 0;
-    e2(1:length(a),ansamples) = 0;
-    wQs(1:length(a),ansamples) = 0;
-    wQ1s(1:length(a),ansamples) = 0;
+    wQ0s(ansamples) = 0;
+    wQ1s(ansamples) = 0;
     
     % definition of the random variables
     d      = 1;
     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
-
+    
+    n = [100 300 500 1000 2000 4000];
+    kldiv(1:length(n)) = 0;
+    minvev0(1:length(n)) = 0;
+    
+    for r = 1:length(n)
     % CE method
-    N      = 5000;    % total number of samples for each level
+    N      = n(r);     % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
-    nsamples = 10000;
+    nsamples = 1000;
     
     % limit state function
     g = @(x) Q1(x);
     [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init,mu,std);
     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
-    
-%     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
-%     q = @(y) pdf(gm,y);
-%     nx = @(x) normpdf(x,mu,std);
-%     ny = @(y) normpdf(y,mu,std);
-%     probx = integral(nx,l,Inf);
-%     proby = integral(ny,l1,Inf);
-%     qx = @(x) ((Q(x)<0).*nx(x))./probx;
-%     qy = @(y) ((Q1(y)<0).*ny(y))./proby;
-%     figure(1)
-%     hold on
-%     X = linspace(0,5,10000)';
-% %     ss = random(gm,5000);
-%     plot(X,qx(X),'-',X,qy(X),'--',X,q(X))
-% %     histogram(ss,100,'Normalization','pdf');
-%     legend('qx','qy','q')
-%     hold off
-    
-%     X = linspace(0,5,1000)';
-%     N = size(X,1);
-%     h_pre = zeros(N,size(Pi_hat,1));
-%     for q = 1:size(Pi_hat,1)
-%         h_pre(:,q) = Pi_hat(q)*mvnpdf(X,mu_hat(q,:),Si_hat(:,:,q));
-%     end
-%     h = sum(h_pre,2);
-%     
-%     k = (Q(X)<0).*mvnpdf(X,mu,std)/prob;
-%     
-%     figure(1)
-%     hold on
-%     plot(X,h,'-o',X,k,'--*')
-%     legend('h','k')
-%     hold off
-%     
-%     samples = GM_sample(mu_hat,Si_hat,Pi_hat,100);
-%       
-%     subplot(1,2,1)
-%     plot(X,h,'-o',X,k,'--*')
-%     legend('h','k')
-%     
-%     subplot(1,2,2)
-%     hist(samples,100)
 
-    for i = 1:length(a)
-        parfor j = 1:ansamples
-            samples = random(gm,nsamples);
-            q = pdf(gm,samples);
+    for j = 1:ansamples
+        samples = random(gm,nsamples);
+        q = pdf(gm,samples);
 
-            Qs = Q(samples(:))<0;
-            Q1s = Q1(samples(:))<0;
-            w = mvnpdf(samples,mu,std)./q;
+        Q0s = Q0(samples(:))<0;
+        Q1s = Q1(samples(:))<0;
+        w = mvnpdf(samples,mu,std)./q;
 
-            wQs(i,j) = mean(w.*Qs);
-            wQ1s(i,j) = mean(w.*Q1s);
-        end
+        wQ0s(j) = mean(w.*Q0s);
+        wQ1s(j) = mean(w.*Q1s);
     end
     
-    e2 = wQs;
-    for i = 1:length(a)
-        e1(i,:) = wQs(i,:)+a(i)*(wQ1s(i,:)-prob1);
-    end
+    m0 = mean(wQ0s);
+    m1 = mean(wQ1s);
+    me = m0+a*(m1-prob1);
       
-    prob
+    prob0
     prob1
     
-    m1 = mean(e1,2);
-    m2 = mean(e2,2);
-    display('prob./m1')
-    prob./m1
-    display('prob./m2')
-    prob./m2
+    display('prob0./m0')
+    prob0./m0
+    display('prob0./me')
+    prob0./me'
     
-    v2 = var(e2,0,2);
-    v1(1:length(a)) = 0;
-    for i = 1:length(a)
-        covar = cov(wQs(i,:),wQ1s(i,:));
-        v1(i) = v2(i)+a(i)^2*var(wQ1s(i,:))+2*a(i)*covar(1,2);
-        corrcoef(wQs(i,:),wQ1s(i,:))
-    end
-    v1 = v1'
-    v2
-    display('v./v1')
-    v./v1
-    display('v./v2')
-    v./v2
-    display('v1./v2')
-    v1./v2
+    covar = cov(wQ0s,wQ1s);
+    v0 = covar(1,1);
+    v1 = covar(2,2);
+    ve = v0+a.^2*v1+2*a*covar(1,2);
+      
+    display('v./v0')
+    v/v0
+    display('v/ve')
+    v./ve'
+    display('ve./v0')
+    ve'./v0
      
-    figure(1)
-    hold on
-    plot(a,v1,'-o',a,v2,'--*')
-    legend('v_0','v_1')
-    xlabel('alpha')
-    hold off
+%     figure(1)
+%     hold on
+%     plot(a,v0*ones(1,length(a)),'-o',a,ve,'--*')
+%     legend('v_0','v_e')
+%     xlabel('alpha')
+%     hold off
+%     
+%     figure(2)
+%     hold on
+%     plot(a,ve./v0,'-o',a,ones(1,length(a)),'--')
+%     legend('v_e/v_0')
+%     xlabel('alpha')
+%     hold off
     
-    figure(2)
-    hold on
-    plot(a,log(v1),'-o',a,log(v2),'--*')
-    legend('ln(v_0)','ln(v_1)')
-    xlabel('alpha')
-    hold off
-    
-    figure(3)
-    hold on
-    plot(a,v1./v2,'-o',a,ones(1,length(a)),'--')
-    legend('v_0/v_1')
-    xlabel('alpha')
-    hold off
-    
-    astar(1:length(a)) = 0;
-    parfor i = 1:length(a)
-        cov01 = cov(wQs(i,:),wQ1s(i,:));
-        astar(i) = -cov01(1,2)/v2(i);
-    end
+    astar = -covar(1,2)/covar(2,2);
+    min_ve = v0+astar^2*v1+2*astar*covar(1,2);
+    display('astar')
     astar
+    display('covar')
+    covar
+    display('min(ve)/v0')
+    minvev0(r) = min(ve)/v0
+    display('min_ve/v0')
+    min_ve/v0
+    
+    qce = @(x) pdf(gm,x);
+    n0 = @(x) normpdf(x,mu,std);
+    n1 = @(x) normpdf(x,mu,std);
+    q0 = @(x) ((Q0(x)<0).*n0(x))./prob0;
+    q1 = @(x) ((Q1(x)<0).*n1(x))./prob1;
+    
+    nrs = 10000000;
+    umin = 0;
+    umax = 7;
+    u = umin+(umax-umin)*rand(nrs,1);
+    sample_value = q1(u);
+    max_value = max(sample_value);
+    accepted = rand(nrs,1)<(sample_value/max_value);
+    s = u(accepted,:);
+    length(s)
+    kldiv(r) = mean(log(q1(s(:)))-log(qce(s(:))))
+    end
+    plot(n,minvev0,'-o',n,kldiv,'--*')
+    
+%     qce = @(x) pdf(gm,x);
+%     n0 = @(x) normpdf(x,mu,std);
+%     n1 = @(x) normpdf(x,mu,std);
+%     q0 = @(x) ((Q0(x)<0).*n0(x))./prob0;
+%     q1 = @(x) ((Q1(x)<0).*n1(x))./prob1;
+%     figure(3)
+%     hold on
+%     X = linspace(0,5,1000)';
+%     plot(X,q0(X),'-',X,q1(X),'--',X,qce(X))
+%     legend('q_0','q_1','q_{CE}')
+%     hold off
     
 end
