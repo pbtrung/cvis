@@ -1,4 +1,4 @@
-function cvis_rs_tols()
+function cvis_ce_N()
     
     dfile = '~/results.txt';
     if exist(dfile, 'file') 
@@ -22,44 +22,45 @@ function cvis_rs_tols()
     v = 1.352806663625048e-09;
     prob0 = 0.001349898031630;
     prob1 = 1-normcdf(l1);
-    q1 = @(x) ((Q1(x)<0).*normpdf(x))/prob1;
+    q1 = @(x) ((Q1(x)<0).*mvnpdf(x,mu,std))/prob1;
     
     a = linspace(-1.5,0.5,33);
     ansamples = 10000;
     wQ0s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     
-    nsamples = 10000;
+    % definition of the random variables
+    d      = 1;
+    pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
+    
+    n = 500:500:3000;
+    kldiv(1:length(n)) = 0;
+    min_ve_v0(1:length(n)) = 0;
+    prob1_m1(1:length(n)) = 0;
+    astar(1:length(n)) = 0;
     umin = 0;
     umax = 7;
-    
-    tol = [0 0.1 0.2 0.4 0.6 0.8 1 1.2];
-    min_ve_v0(1:length(tol)) = 0;
-    astar(1:length(tol)) = 0;
-    kldiv(1:length(tol)) = 0;
     nkl = 10000000;
+    nsamples = 100000;
     
-    for r = 1:length(tol)
-        
-        fprintf('tol: %f\n',tol(r));
-        prob2 = 1-normcdf(l1-tol(r));
-        Q2 = @(x) l1-tol(r)-x;
-        q2 = @(x) ((Q2(x)<0).*normpdf(x))/prob2;
+    for r = 1:length(n)
+        % CE method
+        N      = n(r);    % total number of samples for each level
+        p      = 0.1;     % quantile value to select samples for parameter update
+        k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
+
+        % limit state function
+        g = @(x) Q1(x);
+        [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
+        gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
+        qce = @(x) pdf(gm,x);
 
         for j = 1:ansamples
-            % rejection sampling
-            u = umin+(umax-umin)*rand(nsamples,1);
-            sample_value = q2(u);
-            max_value = max(sample_value);
-            accepted = rand(nsamples,1)<(sample_value/max_value);
-            samples = u(accepted,:);
-            if length(samples) < 200
-                error('length(samples) < 200');
-            end
+            samples = random(gm,nsamples);
 
             Q0s = Q0(samples(:))<0;
             Q1s = Q1(samples(:))<0;
-            w = normpdf(samples)./q2(samples);
+            w = mvnpdf(samples,mu,std)./qce(samples);
 
             wQ0s(j) = mean(w.*Q0s);
             wQ1s(j) = mean(w.*Q1s);
@@ -86,34 +87,41 @@ function cvis_rs_tols()
         v/v0
         display('v/ve')
         v./ve'
-        display('ve./v0')NathanPham@2014
-        
+        display('ve./v0')
         ve'./v0
         
-        astar(r) = -covar(1,2)/v1;
-        astar(2:end)
+        astar(r) = -covar(1,2)/v1
         min_ve_v0(r) = (v0+astar(r)^2*v1+2*astar(r)*covar(1,2))/v0
         
-        kldiv(r) = kl(nkl,umin,umax,q1,q2)
-    
+        prob1_m1(r) = prob1./m1
+        kldiv(r) = kl(nkl,umin,umax,q1,qce)
+                    
     end
     
+    figure(1)
     hold on
-    plot(tol,min_ve_v0,'-o',tol,kldiv,'--*')
-    legend('min(v_e/v_0)','KL Divergence')
-    xlabel('tol')
+    plot(n,min_ve_v0,'-o')
+    legend('min(v_e/v_0)')
+    xlabel('N')
     hold off
     
+    figure(2)
+    hold on
+    plot(n,kldiv,'--*')
+    legend('KL Divergence')
+    xlabel('N')
+    hold off
+
 end
 
-function kldiv = kl(nkl,umin,umax,q1,q2)
+function kldiv = kl(nkl,umin,umax,q1,qce)
     u = umin+(umax-umin)*rand(nkl,1);
     sample_value = q1(u);
     max_value = max(sample_value);
-    accepted = rand(nkl,1)<(sample_value/max_value);
+    accepted = rand(nkl,1)<(sample_value/max_value) & qce(u) ~= 0;
     s = u(accepted,:);
     if length(s) < 10^5
         error('kldiv: length(s) < 10^5');
     end
-    kldiv = mean(log(q1(s(:)))-log(q2(s(:))));
+    kldiv = mean(log(q1(s(:)))-log(qce(s(:))));
 end

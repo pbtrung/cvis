@@ -6,7 +6,7 @@ function cvis_ce()
     mu = 0;
     std = 1;
     w0 = 3;
-    w1 = 2;
+    w1 = 2.8;
     l0 = mu+w0*std;
     l1 = mu+w1*std;
     
@@ -15,31 +15,26 @@ function cvis_ce()
 
     v = 1.352806663625048e-09;
     prob0 = 0.001349898031630;
-    prob1 = 1-normcdf(w1);
+    prob1 = 1-normcdf(l1);
     
-    a = linspace(-2,2,33);
-    ansamples = 100000;
-    wQ0s(ansamples) = 0;
-    wQ1s(ansamples) = 0;
+    a = linspace(-1.5,0.5,33);
+    ansamples = 10000;
+    wQ0s(1:ansamples) = 0;
+    wQ1s(1:ansamples) = 0;
     
     % definition of the random variables
     d      = 1;
     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
     
-    n = [100 300 500 1000 2000 4000];
-    kldiv(1:length(n)) = 0;
-    minvev0(1:length(n)) = 0;
-    
-    for r = 1:length(n)
     % CE method
-    N      = n(r);     % total number of samples for each level
+    N      = 3000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
-    nsamples = 1000;
+    nsamples = 10000;
     
     % limit state function
     g = @(x) Q1(x);
-    [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init,mu,std);
+    [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
 
     for j = 1:ansamples
@@ -77,61 +72,44 @@ function cvis_ce()
     v./ve'
     display('ve./v0')
     ve'./v0
-     
-%     figure(1)
-%     hold on
-%     plot(a,v0*ones(1,length(a)),'-o',a,ve,'--*')
-%     legend('v_0','v_e')
-%     xlabel('alpha')
-%     hold off
-%     
-%     figure(2)
-%     hold on
-%     plot(a,ve./v0,'-o',a,ones(1,length(a)),'--')
-%     legend('v_e/v_0')
-%     xlabel('alpha')
-%     hold off
     
-    astar = -covar(1,2)/covar(2,2);
-    min_ve = v0+astar^2*v1+2*astar*covar(1,2);
-    display('astar')
-    astar
-    display('covar')
-    covar
-    display('min(ve)/v0')
-    minvev0(r) = min(ve)/v0
-    display('min_ve/v0')
-    min_ve/v0
+    figure(1)
+    hold on
+    plot(a,ve,'-o',a,v0*ones(1,length(a)),'--*')
+    legend('v_e','v_0')
+    xlabel('alpha')
+    hold off
     
+    figure(2)
+    hold on
+    plot(a,ve./v0,'-o',a,ones(1,length(a)),'--*')
+    legend('v_e/v_0')
+    xlabel('alpha')
+    hold off
+    
+    q0 = @(x) ((Q0(x)<0).*mvnpdf(x,mu,std))/prob0;
+    q1 = @(x) ((Q1(x)<0).*mvnpdf(x,mu,std))/prob1;
     qce = @(x) pdf(gm,x);
-    n0 = @(x) normpdf(x,mu,std);
-    n1 = @(x) normpdf(x,mu,std);
-    q0 = @(x) ((Q0(x)<0).*n0(x))./prob0;
-    q1 = @(x) ((Q1(x)<0).*n1(x))./prob1;
+    x = linspace(0,7,1000)';
+    figure(3)
+    hold on
+    plot(x,q0(x),x,q1(x),x,qce(x))
+    legend('q_0','q_1','q_{CE}')
+    xlabel('x')
+    hold off
     
-    nrs = 10000000;
     umin = 0;
     umax = 7;
-    u = umin+(umax-umin)*rand(nrs,1);
+    nkl = 10^7;
+    u = umin+(umax-umin)*rand(nkl,1);
     sample_value = q1(u);
     max_value = max(sample_value);
-    accepted = rand(nrs,1)<(sample_value/max_value);
+    accepted = rand(nkl,1)<(sample_value/max_value) & qce(u) ~= 0;
     s = u(accepted,:);
-    length(s)
-    kldiv(r) = mean(log(q1(s(:)))-log(qce(s(:))))
+    if length(s) < 10^5
+        error('kldiv: length(s) < 10^5');
     end
-    plot(n,minvev0,'-o',n,kldiv,'--*')
-    
-%     qce = @(x) pdf(gm,x);
-%     n0 = @(x) normpdf(x,mu,std);
-%     n1 = @(x) normpdf(x,mu,std);
-%     q0 = @(x) ((Q0(x)<0).*n0(x))./prob0;
-%     q1 = @(x) ((Q1(x)<0).*n1(x))./prob1;
-%     figure(3)
-%     hold on
-%     X = linspace(0,5,1000)';
-%     plot(X,q0(X),'-',X,q1(X),'--',X,qce(X))
-%     legend('q_0','q_1','q_{CE}')
-%     hold off
+    min(ve'./v0)
+    kldiv = mean(log(q1(s(:)))-log(qce(s(:))))
     
 end
