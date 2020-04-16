@@ -1,7 +1,7 @@
 function cvis_rs_tols()
     
     dfile = '~/results.txt';
-    if exist(dfile, 'file') 
+    if exist(dfile, 'file')
         delete(dfile); 
     end
     diary(dfile);
@@ -86,8 +86,7 @@ function cvis_rs_tols()
         v/v0
         display('v/ve')
         v./ve'
-        display('ve./v0')NathanPham@2014
-        
+        display('ve./v0')
         ve'./v0
         
         astar(r) = -covar(1,2)/v1;
@@ -99,9 +98,9 @@ function cvis_rs_tols()
     end
     
     hold on
-    plot(tol,min_ve_v0,'-o',tol,kldiv,'--*')
+    plot(l1-tol,min_ve_v0,'-o',l1-tol,kldiv,'--*')
     legend('min(v_e/v_0)','KL Divergence')
-    xlabel('tol')
+    xlabel('Threshold')
     hold off
     
 end

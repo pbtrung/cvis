@@ -36,14 +36,14 @@ function cvis_ce()
     g = @(x) Q1(x);
     [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
+    qce = @(x) pdf(gm,x);
 
     for j = 1:ansamples
         samples = random(gm,nsamples);
-        q = pdf(gm,samples);
 
         Q0s = Q0(samples(:))<0;
         Q1s = Q1(samples(:))<0;
-        w = mvnpdf(samples,mu,std)./q;
+        w = mvnpdf(samples,mu,std)./qce(samples);
 
         wQ0s(j) = mean(w.*Q0s);
         wQ1s(j) = mean(w.*Q1s);
@@ -89,27 +89,13 @@ function cvis_ce()
     
     q0 = @(x) ((Q0(x)<0).*mvnpdf(x,mu,std))/prob0;
     q1 = @(x) ((Q1(x)<0).*mvnpdf(x,mu,std))/prob1;
-    qce = @(x) pdf(gm,x);
-    x = linspace(0,7,1000)';
+    x = linspace(2,5.5,1000)';
     figure(3)
     hold on
-    plot(x,q0(x),x,q1(x),x,qce(x))
-    legend('q_0','q_1','q_{CE}')
-    xlabel('x')
+    plot(x,q0(x),'-',x,q1(x),'-',x,qce(x),'--')
+    l = legend('$q_0$','$q_1$','$\hat{q}$');
+    set(l,'interpreter','latex')
+    xlabel('z')
     hold off
-    
-    umin = 0;
-    umax = 7;
-    nkl = 10^7;
-    u = umin+(umax-umin)*rand(nkl,1);
-    sample_value = q1(u);
-    max_value = max(sample_value);
-    accepted = rand(nkl,1)<(sample_value/max_value) & qce(u) ~= 0;
-    s = u(accepted,:);
-    if length(s) < 10^5
-        error('kldiv: length(s) < 10^5');
-    end
-    min(ve'./v0)
-    kldiv = mean(log(q1(s(:)))-log(qce(s(:))))
     
 end

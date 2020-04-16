@@ -12,7 +12,7 @@ function cvis_ce_N()
     mu = 0;
     std = 1;
     w0 = 3;
-    w1 = 2.8;
+    w1 = 2;
     l0 = mu+w0*std;
     l1 = mu+w1*std;
     
@@ -41,7 +41,7 @@ function cvis_ce_N()
     umin = 0;
     umax = 7;
     nkl = 10000000;
-    nsamples = 100000;
+    nsamples = 10;
     
     for r = 1:length(n)
         % CE method
