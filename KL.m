@@ -22,16 +22,28 @@ x1 = 0:0.5:l1;
 x1 = x1(2:end-1);
 x2 = 0:0.5:l2;
 x2 = x2(2:end-1);
-lambda = lambda1.*lambda2;
-L = diag(sqrt(lambda(1:neig)));
 
 nelx = 60;
 nely = 20;
 E(1:nely,1:nelx) = 0;
-Psi(1:nely,1:nelx,1:neig) = 0;
 a = 1;
 b = 2;
 
+lbd(1:neig,1:neig)= 0;
+for i = 1:neig
+    lbd(i,:) = lambda1(i)*lambda2;
+end
+[lam_idx1,lam_idx2] = ndgrid(1:size(lbd,1),1:size(lbd,2));
+[lambda,idx] = sort(lbd(:),'descend');
+
+neig = 10;
+L = diag(sqrt(lambda(1:neig)));
+lam_idx1 = lam_idx1(idx);
+lam_idx2 = lam_idx2(idx);
+Psi1 = Psi1(:,lam_idx1(1:neig));
+Psi2 = Psi2(:,lam_idx2(1:neig));
+
+Psi(1:nely,1:nelx,1:neig) = 0;
 for i = 1:nelx
     for j = 1:nely
         Psi(j,i,:) = Psi1(x1(i)).*Psi2(x2(j));
@@ -45,5 +57,4 @@ for i = 1:nelx
         E(j,i) = a+(b-a)*normcdf(X);
     end
 end
-
 E
