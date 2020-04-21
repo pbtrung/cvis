@@ -19,7 +19,7 @@ function [U]=FErf(lx,ly,nelx,nely,dof,force,E)
     alldofs     = 1:2*(nely+1)*(nelx+1);
     freedofs    = setdiff(alldofs,fixeddofs);
     % SOLVING
-    U(freedofs,:) = K(freedofs,freedofs) \ F(freedofs,:);      
+    U(freedofs,:) = K(freedofs,freedofs) \ F(freedofs,:);
     U(fixeddofs,:)= 0;
 end
 

@@ -52,7 +52,7 @@ function cvis_ce()
     
     % limit state function
     g = @(x) Q1(x);
-    [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init,mu,sigma);
+    [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
     
     tic
