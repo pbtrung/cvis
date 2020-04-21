@@ -1,6 +1,6 @@
 function [Psi,lambda,PsiE1] = KL(lx,ly,Lx,Ly,nelx,nely,fl)
 
-    neig = 10;
+    neig = 5;
     
     if fl == 1
         K1 = @(s,t) exp(-abs(s-t)/Lx);

@@ -1,35 +1,44 @@
 % FE-ANALYSIS
-function Udof = FEQ0(lx,ly,nelx,nely,dof,force,x,P,L)
+function Udof = FEQ0(lx,ly,nelx,nely,dof,force,x,P,L,a,b)
     
-    a = 1;
-    b = 2;
-    LZ = L*x;
-    PZ = dot(P',LZ);
-    X = reshape(PZ,nelx,nely)';
-    E = a+(b-a)*normcdf(X);
+    nx = length(x); % number of columns
+    Udof(1:nx) = 0;
 
-    K = sparse(2*(nelx+1)*(nely+1),2*(nelx+1)*(nely+1));
     F = sparse(2*(nely+1)*(nelx+1),1);
-    U = zeros(2*(nely+1)*(nelx+1),1);
     KE = ElmStiffnessMatrix(lx,ly,nelx,nely);
     
-    for elx = 1:nelx
-        for ely = 1:nely
-            n1 = (nely+1)*(elx-1) + ely;
-            n2 = (nely+1)*elx + ely;
-            edof = [2*n1-1; 2*n1; 2*n2-1; 2*n2; 2*n2+1; 2*n2+2; 2*n1+1; 2*n1+2];
-            K(edof,edof) = K(edof,edof) + E(ely,elx)*KE;
-        end
-    end
     % DEFINE LOADS AND SUPPORTS (HALF MBB-BEAM)
     F(dof,1) = force;
     fixeddofs   = 1:2*(nely+1);
     alldofs     = 1:2*(nely+1)*(nelx+1);
     freedofs    = setdiff(alldofs,fixeddofs);
-    % SOLVING
-    U(freedofs,:) = K(freedofs,freedofs) \ F(freedofs,:);
-    U(fixeddofs,:)= 0;
-    Udof = U(dof);
+    
+    E(1:nely,1:nelx,1:nx) = 0;
+        
+    for j = 1:nx
+        LZ = L*x(:,j);
+        PZ = dot(P',repmat(LZ,1,nelx*nely));
+        X = reshape(PZ,nelx,nely)';
+        E(:,:,j) = a+(b-a)*normcdf(X);
+    end
+    
+    parfor j = 1:nx
+        K = sparse(2*(nelx+1)*(nely+1),2*(nelx+1)*(nely+1));
+        U = zeros(2*(nely+1)*(nelx+1),1);
+        for elx = 1:nelx
+            for ely = 1:nely
+                n1 = (nely+1)*(elx-1) + ely;
+                n2 = (nely+1)*elx + ely;
+                edof = [2*n1-1; 2*n1; 2*n2-1; 2*n2; 2*n2+1; 2*n2+2; 2*n1+1; 2*n1+2];
+                K(edof,edof) = K(edof,edof) + E(ely,elx,j)*KE;
+            end
+        end
+        
+        % SOLVING
+        U(freedofs,:) = K(freedofs,freedofs) \ F(freedofs,:);
+        U(fixeddofs,:)= 0;
+        Udof(j) = U(dof);
+    end
 end
 
 function KE = ElmStiffnessMatrix(lx,ly,nelx,nely)

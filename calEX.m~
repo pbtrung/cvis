@@ -10,7 +10,7 @@ function calEX(p,p1)
     
     m = max(Uy1(:));
 %     l = 0.9*m
-    l = 108.510;
+    l = 108.5101677320706e
     mean(mean(l-Uy1<0,2))
     var(mean(l-Uy1<0,2))
 end
