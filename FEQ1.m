@@ -12,7 +12,7 @@ function Udof = FEQ1(lx,ly,nelx,nely,dof,force,x,PsiE1,L,lower,upper)
     alldofs     = 1:2*(nely+1)*(nelx+1);
     freedofs    = setdiff(alldofs,fixeddofs);
     % SOLVING
-    for j = 1:nx
+    parfor j = 1:nx
         K = sparse(2*(nelx+1)*(nely+1),2*(nelx+1)*(nely+1));
         U = zeros(2*(nely+1)*(nelx+1),1);
         X = PsiE1*(L*x(:,j));
