@@ -9,7 +9,7 @@ function [K]=...
 
 % K : stiffness matrix
 
-K=zeros(GDof);
+K=sparse(GDof,GDof);
 
 % Gauss quadrature for bending part
 [gaussWeights,gaussLocations]=gaussQuadrature('complete');
