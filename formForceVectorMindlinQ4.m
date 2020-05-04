@@ -8,7 +8,7 @@ function [force]=...
 % for Mindlin plate element
 
 % force : force vector
-force=zeros(GDof,1);
+force=sparse(GDof,1);
 
 % Gauss quadrature for bending part
 [gaussWeights,gaussLocations]=gaussQuadrature('reduced');

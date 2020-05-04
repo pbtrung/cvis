@@ -7,17 +7,10 @@ E = 10000;
 poisson = 0.30;
 kapa = 5 / 6;
 
-% matrix C
-% bending part
-% C_bending = I * E / (1 - poisson^2) * ...
-%     [1, poisson, 0; poisson, 1, 0; 0, 0, (1 - poisson) / 2];
-% shear part
-% C_shear = kapa * thickness * E / 2 / (1 + poisson) * eye(2);
-
-%Mesh generation
+% Mesh generation
 L = 1;
-numberElementsX = 80;
-numberElementsY = 80;
+numberElementsX = 30;
+numberElementsY = 30;
 if numberElementsX ~= numberElementsY || mod(numberElementsX,2) ~= 0
     error("Check numberElementsX and numberElementsY")
 end
@@ -38,8 +31,6 @@ elemNum(4,:) = sort(nnn{1,2}(:));
 % GDof: global number of degrees of freedom
 GDof = 3 * numberNodes;
 
-nsamples = 1000000;
-umax(1:nsamples) = 0;
 Pmin = 1;
 Pmax = 100;
 hmin = 0.05;
@@ -48,35 +39,45 @@ hmax = 0.1;
 [prescribedDof, activeDof] = ...
         EssentialBC('ssss', GDof, xx, yy, nodeCoordinates, numberNodes);
 
-randP = rand(nsamples,4);
-randh = rand(nsamples,4);
-parfor i = 1:nsamples
-    P = Pmin+(Pmax-Pmin)*randP(i,:);
-    h = hmin+(hmax-hmin)*randh(i,:);
+outer = 1000;
+inner = 1000;
+umax(1:outer,1:inner) = 0;
 
-    % computation of the system stiffness matrix and force vector
-    [stiffness] = ...
-        formStiffnessMatrixMindlinQ4(GDof, numberElements, ...
-        elementNodes, numberNodes, nodeCoordinates,E,poisson,kapa,h,elemNum);
+for i = 1:outer
+    randP = rand(inner,4);
+    randh = rand(inner,4);
+    tic
+    parfor j = 1:inner
+        fprintf('outer: %d, inner: %d\n',i,j);
+        P = Pmin+(Pmax-Pmin)*randP(j,:);
+        h = hmin+(hmax-hmin)*randh(j,:);
 
-    [force] = ...
-        formForceVectorMindlinQ4(GDof, numberElements, ...
-        elementNodes, nodeCoordinates,P,elemNum);
+        % computation of the system stiffness matrix and force vector
+        [stiffness] = ...
+            formStiffnessMatrixMindlinQ4(GDof, numberElements, ...
+            elementNodes, numberNodes, nodeCoordinates,E,poisson,kapa,h,elemNum);
 
-    % solution
-    displacements = solution(GDof, prescribedDof, stiffness, force);
+        [force] = ...
+            formForceVectorMindlinQ4(GDof, numberElements, ...
+            elementNodes, nodeCoordinates,P,elemNum);
 
-    % deformed shape
-    % figure
-    % plot3(xx,yy,displacements(1:numberNodes),'.')
-    umax(i) = max(displacements(1:numberNodes));
+        % solution
+        displacements = solution(GDof, prescribedDof, stiffness, force);
+
+        % deformed shape
+        % figure
+        % plot3(xx,yy,displacements(1:numberNodes),'.')
+        umax(i,j) = max(displacements(1:numberNodes));
+    end
+    toc
 end
-writematrix(umax,'Ex3_umax.txt');
+writematrix(umax,'Ex3_umax_high_30x30.txt');
 
-m = max(umax);
+m = max(umax(:));
 fprintf('m: %f\n',m);
 l = 0.5:0.05:1;
 for j = 1:length(l)
     fprintf('iter: %d, l: %f, l*m: %f\n',j,l(j),l(j)*m);
-    mean(l(j)*m-umax<0)
+    mean(mean(l(j)*m-umax<0,2))
+    var(mean(l(j)*m-umax<0,2))
 end
