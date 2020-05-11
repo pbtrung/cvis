@@ -15,8 +15,8 @@ kapa = 5 / 6;
 
 % Mesh generation
 L = 1;
-numberElementsX = 30;
-numberElementsY = 30;
+numberElementsX = 20;
+numberElementsY = 20;
 if numberElementsX ~= numberElementsY || mod(numberElementsX,2) ~= 0
     error("Check numberElementsX and numberElementsY")
 end
@@ -41,7 +41,7 @@ P = ones(1,4);
 h = 0.1*ones(1,4);
 % boundary conditions
 [prescribedDof, activeDof] = ...
-        EssentialBC('ssss', GDof, xx, yy, nodeCoordinates, numberNodes);
+        EssentialBC('cccc', GDof, xx, yy, nodeCoordinates, numberNodes);
 [stiffness] = ...
         formStiffnessMatrixMindlinQ4(GDof, numberElements, ...
         elementNodes, numberNodes, nodeCoordinates,E,poisson,kapa,h,elemNum);
