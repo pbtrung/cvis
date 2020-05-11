@@ -1,4 +1,4 @@
-function [Pr, lv, N_tot, gamma_hat, samplesU, samplesX, k_fin, mu_hat, Si_hat, Pi_hat] = CEIS_GM(N, p , g_fun, distr, k_init, mu_in, sigma)
+function [Pr, lv, N_tot, gamma_hat, samplesU, samplesX, k_fin, mu_hat, Si_hat, Pi_hat] = CEIS_GM(N, p, g_fun, distr, k_init)
 %% Cross entropy-based importance sampling with Gaussian Mixture
 %{
 ---------------------------------------------------------------------------
@@ -112,7 +112,7 @@ for j = 1:max_it
     I = (geval <= gamma_hat(j+1));
     
     % Likelihood ratio
-    W = mvnpdf(X,mu_in,sigma)./h;
+    W = mvnpdf(X,zeros(1,dim),eye(dim))./h;
     
     % Parameter update
     [mu, si, pi] = EMGM(X(I,:)',W(I),k_init);
@@ -136,7 +136,7 @@ if mm > nn
 end
 
 %% Calculation of the Probability of failure
-W_final = mvnpdf(X,mu_in,sigma)./h;
+W_final = mvnpdf(X, zeros(1,dim), eye(dim))./h;
 I_final = (geval <=0 );
 Pr      = 1/N*sum(I_final*W_final);
 

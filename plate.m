@@ -33,11 +33,11 @@ GDof = 3 * numberNodes;
 
 Pmin = 1;
 Pmax = 100;
-hmin = 0.05;
-hmax = 0.1;
+hmin = 1;
+hmax = 100;
 % % boundary conditions
 [prescribedDof, activeDof] = ...
-        EssentialBC('ssss', GDof, xx, yy, nodeCoordinates, numberNodes);
+        EssentialBC('cccc', GDof, xx, yy, nodeCoordinates, numberNodes);
 
 outer = 1000;
 inner = 1000;
@@ -50,7 +50,7 @@ for i = 1:outer
     parfor j = 1:inner
         fprintf('outer: %d, inner: %d\n',i,j);
         P = Pmin+(Pmax-Pmin)*randP(j,:);
-        h = hmin+(hmax-hmin)*randh(j,:);
+        h = (hmin+(hmax-hmin)*randh(j,:))/100;
 
         % computation of the system stiffness matrix and force vector
         [stiffness] = ...
@@ -71,7 +71,7 @@ for i = 1:outer
     end
     toc
 end
-writematrix(umax,'Ex3_umax_high_30x30.txt');
+writematrix(umax,'Ex3_umax_cccc_30x30.txt');
 
 m = max(umax(:));
 fprintf('m: %f\n',m);
