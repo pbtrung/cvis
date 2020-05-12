@@ -1,5 +1,8 @@
 function cvis_ce()    
 
+    format long;
+    rng('default');
+
     nelx = 30;
     nely = 30;
     nelx1 = 8;
@@ -28,9 +31,16 @@ function cvis_ce()
     lower = 1;
     upper = 100;
     pi_pdf = repmat(ERADist('uniform','PAR',[lower upper]),d,1);
+    if any(strcmp('Marginals',fieldnames(pi_pdf))) == 1   
+        % use Nataf transform (dependence)
+        u2x = @(u) pi_pdf.U2X(u);
+    else
+        % use distribution information for the transformation (independence)
+        u2x = @(u) pi_pdf(1).icdf(normcdf(u));
+    end
     
     % CE method
-    N      = 5000;    % total number of samples for each level
+    N      = 1000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
     nsamples = 100;
@@ -45,6 +55,7 @@ function cvis_ce()
         fprintf('ansamples: %d\n',j);
         tic
         samples = random(gm,nsamples);
+        samples = u2x(samples);
         
         w = uniformpdf(nsamples,samples,lower,upper)./qce(samples);
         Q0s = Q0(samples)<0;
