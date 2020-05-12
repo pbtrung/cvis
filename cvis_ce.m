@@ -110,7 +110,7 @@ end
 function updf = uniformpdf(nsamples,s,lower,upper)
     updf = ones(nsamples,1);
     for i = 1:4
-        updf = updf.*unifpdf(s(:,i),lower/100,upper/100);
+        updf = updf.*unifpdf(s(:,i)/100,lower/100,upper/100);
     end
     for i = 5:8
         updf = updf.*unifpdf(s(:,i),lower,upper);
