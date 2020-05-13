@@ -55,9 +55,9 @@ function cvis_ce()
         fprintf('ansamples: %d\n',j);
         tic
         samples = random(gm,nsamples);
-        samples = u2x(samples);
         
-        w = uniformpdf(nsamples,samples,lower,upper)./qce(samples);
+        w = mvnpdf(samples,zeros(1,d),eye(d))./qce(samples);
+        samples = u2x(samples);
         Q0s = Q0(samples)<0;
         Q1s = Q1(samples)<0;
 
@@ -105,14 +105,4 @@ function cvis_ce()
     legend('v_e/v_0')
     xlabel('alpha')
     hold off
-end
-
-function updf = uniformpdf(nsamples,s,lower,upper)
-    updf = ones(nsamples,1);
-    for i = 1:4
-        updf = updf.*unifpdf(s(:,i)/100,lower/100,upper/100);
-    end
-    for i = 5:8
-        updf = updf.*unifpdf(s(:,i),lower,upper);
-    end
 end
