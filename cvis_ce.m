@@ -22,7 +22,7 @@ function cvis_ce()
     Q1 = @(x) l1-FE_plate(nelx1,nely1,x);
     
     a = linspace(-1.5,0.5,33);
-    ansamples = 1000;
+    ansamples = 100;
     wQ0s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     
@@ -40,7 +40,7 @@ function cvis_ce()
     end
     
     % CE method
-    N      = 1000;    % total number of samples for each level
+    N      = 5000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
     nsamples = 100;
