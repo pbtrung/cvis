@@ -138,7 +138,7 @@ end
 %% Calculation of the Probability of failure
 W_final = mvnpdf(X, zeros(1,dim), eye(dim))./h;
 I_final = (geval <=0 );
-Pr      = 1/N*sum(I_final*W_final);
+Pr      = 1/N*sum(I_final*W_final)
 
 %% transform the samples to the physical/original space
 samplesX = cell(lv,1);

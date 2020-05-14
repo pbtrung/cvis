@@ -5,24 +5,24 @@ function cvis_ce()
 
     nelx = 30;
     nely = 30;
-    nelx1 = 20;
-    nely1 = 20;
+    nelx1 = 10;
+    nely1 = 10;
     if nelx ~= nely || mod(nelx,2) ~= 0 || nelx1 ~= nely1 || mod(nelx1,2) ~= 0
         error("Check inputs")
     end
         
     l0 = 4.487104;
-    l1 = 1.485126;
+    l1 = 6.534340;
     EQ0 = 0.002649;
     VQ0 = 2.682481e-06;
-    EQ1 = 0.016496;
+    EQ1 = 0.010914;
     
     % x(nsamples,8)
     Q0 = @(x) l0-FE_plate(nelx,nely,x);
-    Q1 = @(x) l1-FE_plate(nelx1,nely1,x);
+    Q1 = @(x) l1-FE_plate1(nelx1,nely1,x);
     
     a = linspace(-1.5,0.5,33);
-    ansamples = 1000;
+    ansamples = 100;
     wQ0s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     
