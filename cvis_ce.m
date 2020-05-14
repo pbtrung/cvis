@@ -12,10 +12,10 @@ function cvis_ce()
     end
         
     l0 = 4.487104;
-    l1 = 6.534340;
+    l1 = 0.015346;
     EQ0 = 0.002649;
     VQ0 = 2.682481e-06;
-    EQ1 = 0.010914;
+    EQ1 = 0.014787;
     
     % x(nsamples,8)
     Q0 = @(x) l0-FE_plate(nelx,nely,x);
