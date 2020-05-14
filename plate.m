@@ -44,13 +44,13 @@ inner = 1000;
 umax(1:outer,1:inner) = 0;
 
 for i = 1:outer
-    randP = rand(inner,1);
-    randh = rand(inner,1);
+    randP = rand(inner,4);
+    randh = rand(inner,4);
     tic
     parfor j = 1:inner
         fprintf('outer: %d, inner: %d\n',i,j);
-        P = (Pmin+(Pmax-Pmin)*randP(j,:))*ones(1,4);
-        h = ((hmin+(hmax-hmin)*randh(j,:))/100)*ones(1,4);
+        P = mean(Pmin+(Pmax-Pmin)*randP(j,:))*ones(1,4);
+        h = mean((hmin+(hmax-hmin)*randh(j,:))/100)*ones(1,4);
 
         % computation of the system stiffness matrix and force vector
         [stiffness] = ...
