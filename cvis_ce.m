@@ -22,7 +22,7 @@ function cvis_ce()
     Q1 = @(x) l1-FE_plate(nelx1,nely1,x);
     
     a = linspace(-1.5,0.5,33);
-    ansamples = 100;
+    ansamples = 1000;
     wQ0s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     
