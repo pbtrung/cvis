@@ -25,9 +25,9 @@ function calEX(p,p1)
         U1mean(j) = mean(mean(l(j)*m-Uy1<0,2));
         U1var(j) = var(mean(l(j)*m-Uy1<0,2));
     end
-    writematrix(l*m,'U1_lm_20x20_EX.txt');
-    writematrix(U1mean,'U1mean_20x20.txt');
-    writematrix(U1var,'U1var_20x20.txt');
+    writematrix(l*m,'U1_lm_10x10_EX.txt');
+    writematrix(U1mean,'U1mean_10x10.txt');
+    writematrix(U1var,'U1var_10x10.txt');
     
 end
 
