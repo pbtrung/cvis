@@ -9,8 +9,8 @@ kapa = 5 / 6;
 
 % Mesh generation
 L = 1;
-numberElementsX = 20;
-numberElementsY = 20;
+numberElementsX = 10;
+numberElementsY = 10;
 if numberElementsX ~= numberElementsY || mod(numberElementsX,2) ~= 0
     error("Check numberElementsX and numberElementsY")
 end
@@ -44,13 +44,13 @@ inner = 1000;
 umax(1:outer,1:inner) = 0;
 
 for i = 1:outer
-    randP = rand(inner,4);
-    randh = rand(inner,4);
+    randP = rand(inner,1);
+    randh = rand(inner,1);
     tic
     parfor j = 1:inner
         fprintf('outer: %d, inner: %d\n',i,j);
-        P = Pmin+(Pmax-Pmin)*randP(j,:);
-        h = (hmin+(hmax-hmin)*randh(j,:))/100;
+        P = (Pmin+(Pmax-Pmin)*randP(j,:))*ones(1,4);
+        h = ((hmin+(hmax-hmin)*randh(j,:))/100)*ones(1,4);
 
         % computation of the system stiffness matrix and force vector
         [stiffness] = ...
@@ -71,11 +71,11 @@ for i = 1:outer
     end
     toc
 end
-writematrix(umax,'Ex3_umax_cccc_20x20.txt');
+writematrix(umax,'Ex3_umax_cccc_10x10.txt');
 
 m = max(umax(:));
 fprintf('m: %f\n',m);
-l = 0.05:0.05:1;
+l = 0.5:0.05:1;
 for j = 1:length(l)
     fprintf('iter: %d, l: %f, l*m: %f\n',j,l(j),l(j)*m);
     mean(mean(l(j)*m-umax<0,2))
