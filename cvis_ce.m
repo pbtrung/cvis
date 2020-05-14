@@ -5,17 +5,17 @@ function cvis_ce()
 
     nelx = 30;
     nely = 30;
-    nelx1 = 8;
-    nely1 = 8;
+    nelx1 = 20;
+    nely1 = 20;
     if nelx ~= nely || mod(nelx,2) ~= 0 || nelx1 ~= nely1 || mod(nelx1,2) ~= 0
         error("Check inputs")
     end
         
     l0 = 4.487104;
-    l1 = 1.830270;
+    l1 = 1.485126;
     EQ0 = 0.002649;
     VQ0 = 2.682481e-06;
-    EQ1 = 0.012391;
+    EQ1 = 0.016496;
     
     % x(nsamples,8)
     Q0 = @(x) l0-FE_plate(nelx,nely,x);
