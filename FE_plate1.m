@@ -21,7 +21,7 @@ function wmax = FE_plate1(nelx,nely,x)
     GDof = 3 * numberNodes;
     
     nsamples = size(x,1);
-    h = (mean(x(:,1:4),2)/100)*ones(1,4);
+    h = mean(x(:,1:4)/100,2)*ones(1,4);
     P = mean(x(:,5:8),2)*ones(1,4);
     
     % boundary conditions
