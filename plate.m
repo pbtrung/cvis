@@ -75,7 +75,7 @@ writematrix(umax,'Ex3_umax_cccc_10x10_small.txt');
 
 m = max(umax(:));
 fprintf('m: %f\n',m);
-l = 0.5:0.05:1;
+l = 0.05:0.05:1;
 for j = 1:length(l)
     fprintf('iter: %d, l: %f, l*m: %f\n',j,l(j),l(j)*m);
     mean(mean(l(j)*m-umax<0,2))
