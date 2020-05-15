@@ -2,7 +2,7 @@ clear all;
 format long;
 
 % materials
-E = 10920;
+E = 10000;
 poisson = 0.30;
 kapa = 5 / 6;
 
@@ -15,8 +15,8 @@ kapa = 5 / 6;
 
 % Mesh generation
 L = 1;
-numberElementsX = 20;
-numberElementsY = 20;
+numberElementsX = 10;
+numberElementsY = 10;
 if numberElementsX ~= numberElementsY || mod(numberElementsX,2) ~= 0
     error("Check numberElementsX and numberElementsY")
 end
@@ -37,8 +37,8 @@ elemNum(4,:) = sort(nnn{1,2}(:));
 % GDof: global number of degrees of freedom
 GDof = 3 * numberNodes;
 
-P = ones(1,4);
-h = 0.1*ones(1,4);
+P = 2*ones(1,4);
+h = 0.05*ones(1,4);
 % boundary conditions
 [prescribedDof, activeDof] = ...
         EssentialBC('cccc', GDof, xx, yy, nodeCoordinates, numberNodes);

@@ -11,27 +11,27 @@ function cvis_ce()
         error("Check inputs")
     end
         
-    l0 = 4.487104;
-    l1 = 0.015346;
-    EQ0 = 0.002649;
-    VQ0 = 2.682481e-06;
-    EQ1 = 0.014787;
+%     l0 = 
+    l1 = 
+%     EQ0 = 
+%     VQ0 = 
+    EQ1 = 
     
     % x(nsamples,8)
     Q0 = @(x) l0-FE_plate(nelx,nely,x);
-    Q1 = @(x) l1-FE_plate1(nelx1,nely1,x);
+    Q1 = @(x) l1-FE_plate(nelx1,nely1,x);
     
     a = linspace(-1.5,0.5,33);
-    ansamples = 1000;
+    ansamples = 100;
     wQ0s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     
     % definition of the random variables
     d = 8;
     lower = 1;
-    upper = 100;
+    upper = 2;
     pi_pdf = repmat(ERADist('uniform','PAR',[lower upper]),d,1);
-    if any(strcmp('Marginals',fieldnames(pi_pdf))) == 1   
+    if any(strcmp('Marginals',fieldnames(pi_pdf))) == 1
         % use Nataf transform (dependence)
         u2x = @(u) pi_pdf.U2X(u);
     else
@@ -68,29 +68,29 @@ function cvis_ce()
     writematrix(wQ0s,'wQ0s.txt');
     writematrix(wQ1s,'wQ1s.txt');
     
-    m0 = mean(wQ0s);
-    m1 = mean(wQ1s);
-    me = m0+a*(m1-EQ1);
+%     m0 = mean(wQ0s);
+%     m1 = mean(wQ1s);
+%     me = m0+a*(m1-EQ1);
       
-    EQ0
+%     EQ0
     EQ1
     
-    display('EQ0./m0')
-    EQ0./m0
-    display('EQ0./me')
-    EQ0./me'
+%     display('EQ0./m0')
+%     EQ0./m0
+%     display('EQ0./me')
+%     EQ0./me'
     
-    covar = cov(wQ0s,wQ1s)
+    covar = cov(wQ0s,wQ1s);
     v0 = covar(1,1);
     v1 = covar(2,2);
     ve = v0+a.^2*v1+2*a*covar(1,2);
       
-    display('VQ0/v0')
-    VQ0/v0
-    display('VQ0./ve')
-    VQ0./ve'
+%     display('VQ0/v0')
+%     VQ0/v0
+%     display('VQ0./ve')
+%     VQ0./ve'
     display('ve./v0')
-    ve./v0
+    ve'./v0
     
     figure(1)
     hold on
