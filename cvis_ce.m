@@ -22,7 +22,7 @@ function cvis_ce()
     Q1 = @(x) l1-FE_plate1(nelx1,nely1,x);
     
     a = linspace(-1.5,0.5,33);
-    ansamples = 100;
+    ansamples = 1000;
     wQ0s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     
@@ -80,7 +80,7 @@ function cvis_ce()
     display('EQ0./me')
     EQ0./me'
     
-    covar = cov(wQ0s,wQ1s);
+    covar = cov(wQ0s,wQ1s)
     v0 = covar(1,1);
     v1 = covar(2,2);
     ve = v0+a.^2*v1+2*a*covar(1,2);
