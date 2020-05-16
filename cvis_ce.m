@@ -11,7 +11,7 @@ function cvis_ce()
         error("Check inputs")
     end
         
-%     l0 = 
+    l0 = 0.013090;
     l1 = 0.010287;
 %     EQ0 = 
 %     VQ0 = 

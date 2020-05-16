@@ -49,8 +49,8 @@ for i = 1:outer
     tic
     parfor j = 1:inner
         fprintf('outer: %d, inner: %d\n',i,j);
-        P = mean(Pmin+(Pmax-Pmin)*randP(j,:))*ones(1,4);
-        h = mean((hmin+(hmax-hmin)*randh(j,:))/20)*ones(1,4);
+        P = Pmin+(Pmax-Pmin)*randP(j,:);
+        h = (hmin+(hmax-hmin)*randh(j,:))/20;
 
         % computation of the system stiffness matrix and force vector
         [stiffness] = ...
