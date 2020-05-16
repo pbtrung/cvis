@@ -88,4 +88,4 @@ end
 
 writematrix(lm','plate_lm.txt');
 writematrix(Umean','plate_Umean.txt');
-writematrix(Umean','plate_Umean.txt');
+writematrix(Uvar','plate_Uvar.txt');

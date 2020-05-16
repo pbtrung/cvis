@@ -11,11 +11,11 @@ function cvis_ce()
         error("Check inputs")
     end
         
-    l0 = 0.013103;
-    l1 = 0.011231;
+    l0 = 0.011826;
+    l1 = 0.011456;
 %     EQ0 = 
 %     VQ0 = 
-    EQ1 = 0.012674;
+    EQ1 = 0.019405;
     
     % x(nsamples,8)
     Q0 = @(x) l0-FE_plate(nelx,nely,x);
@@ -29,7 +29,7 @@ function cvis_ce()
     % definition of the random variables
     d = 8;
     lower = 1;
-    upper = 2;
+    upper = 1.1;
     pi_pdf = repmat(ERADist('uniform','PAR',[lower upper]),d,1);
     if any(strcmp('Marginals',fieldnames(pi_pdf))) == 1
         % use Nataf transform (dependence)
