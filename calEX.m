@@ -17,7 +17,7 @@ function calEX(p,p1)
     writematrix(Uvar,'C:\Users\Nathan\Data\Uvar.txt');
    
     m = max(Uy1(:));
-    l = 0.001:0.001:0.1;
+    l = 0.05:0.05:1;
     U1mean(1:length(l)) = 0;
     U1var(1:length(l)) = 0;
     for j = 1:length(l)
@@ -25,8 +25,8 @@ function calEX(p,p1)
         U1mean(j) = mean(mean(l(j)*m-Uy1<0,2));
         U1var(j) = var(mean(l(j)*m-Uy1<0,2));
     end
-    writematrix(l*m,'C:\Users\Nathan\Data\U1_lm_10x10_EX.txt');
-    writematrix(U1mean,'C:\Users\Nathan\Data\U1mean_10x10.txt');
-    writematrix(U1var,'C:\Users\Nathan\Data\U1var_10x10.txt');
+    writematrix(l'*m,'C:\Users\Nathan\Data\U1_lm_10x10_EX.txt');
+    writematrix(U1mean','C:\Users\Nathan\Data\U1mean_10x10.txt');
+    writematrix(U1var','C:\Users\Nathan\Data\U1var_10x10.txt');
     
 end

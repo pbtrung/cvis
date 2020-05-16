@@ -11,11 +11,11 @@ function cvis_ce()
         error("Check inputs")
     end
         
-    l0 = 0.013090;
-    l1 = 0.010287;
+    l0 = 0.013103;
+    l1 = 0.011231;
 %     EQ0 = 
 %     VQ0 = 
-    EQ1 = 0.019249;
+    EQ1 = 0.012674;
     
     % x(nsamples,8)
     Q0 = @(x) l0-FE_plate(nelx,nely,x);
