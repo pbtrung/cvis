@@ -71,21 +71,14 @@ for i = 1:outer
     end
     toc
 end
-writematrix(umax,'Ex3_umax_cccc_10x10_10_11.txt');
+writematrix(umax,'Ex3_umax_cccc_10x10_small.txt');
 
 m = max(umax(:));
 fprintf('m: %f\n',m);
 l = 0.05:0.05:1;
-lm(1:length(l)) = 0;
-Umean(1:length(l)) = 0;
-Uvar(1:length(l)) = 0;
 
 for j = 1:length(l)
-    lm(j) = l(j)*m;
-    Umean(j) = mean(mean(lm(j)-umax<0,2));
-    Uvar(j) = var(mean(lm(j)-umax<0,2));
+    fprintf('iter: %d, l: %f, l*m: %f\n',j,l(j),l(j)*m);
+    mean(mean(l(j)*m-umax<0,2))
+    var(mean(l(j)*m-umax<0,2))
 end
-
-writematrix(lm','plate_lm.txt');
-writematrix(Umean','plate_Umean.txt');
-writematrix(Umean','plate_Umean.txt');
