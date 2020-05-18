@@ -21,6 +21,7 @@ function wmax = FE_plate(nelx,nely,x)
     GDof = 3 * numberNodes;
     
     nsamples = size(x,1);
+    midNode = (numberNodes+1)/2;
     h = x(:,1:4)/20;
     P = x(:,5:8);
     
@@ -38,7 +39,7 @@ function wmax = FE_plate(nelx,nely,x)
             elementNodes, nodeCoordinates,P(i,:),elemNum);
         % solution
         displacements = solution(GDof, prescribedDof, stiffness, force);
-        wmax(i) = max(displacements(1:numberNodes));
+        wmax(i) = displacements(midNode);
     end
     
 end
