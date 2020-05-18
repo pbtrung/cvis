@@ -15,8 +15,8 @@ kapa = 5 / 6;
 
 % Mesh generation
 L = 1;
-numberElementsX = 10;
-numberElementsY = 10;
+numberElementsX = 30;
+numberElementsY = 30;
 if numberElementsX ~= numberElementsY || mod(numberElementsX,2) ~= 0
     error("Check numberElementsX and numberElementsY")
 end
@@ -50,5 +50,4 @@ h = 0.05*ones(1,4);
     elementNodes, nodeCoordinates,P,elemNum);
 % solution
 displacements = solution(GDof, prescribedDof, stiffness, force);
-
-max(displacements(1:numberNodes))
+[M,I]=max(displacements(1:numberNodes))

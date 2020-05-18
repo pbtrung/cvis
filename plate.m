@@ -41,6 +41,7 @@ hmax = 1.1;
 
 outer = 1000;
 inner = 1000;
+maxNode = (numberNodes+1)/2;
 umax(1:outer,1:inner) = 0;
 
 for i = 1:outer
@@ -68,6 +69,9 @@ for i = 1:outer
         % figure
         % plot3(xx,yy,displacements(1:numberNodes),'.')
         umax(i,j) = max(displacements(1:numberNodes));
+        if umax(i,j) ~= displacements(maxNode)
+            error('Different node')
+        end
     end
     toc
 end
