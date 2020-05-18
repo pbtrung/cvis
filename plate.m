@@ -49,7 +49,6 @@ for i = 1:outer
     randh = rand(inner,4);
     tic
     parfor j = 1:inner
-        fprintf('outer: %d, inner: %d\n',i,j);
         P = Pmin+(Pmax-Pmin)*randP(j,:);
         h = (hmin+(hmax-hmin)*randh(j,:))/20;
 
@@ -71,7 +70,9 @@ for i = 1:outer
         [M,idx] = max(displacements(1:numberNodes));
         umax(i,j) = displacements(midNode);
         if idx ~= midNode
-            fprintf('idx ~= midNode\n')
+            fprintf('outer: %d, inner: %d, idx ~= midNode\n',i,j);
+        else
+            fprintf('outer: %d, inner: %d\n',i,j);
         end
     end
     toc
