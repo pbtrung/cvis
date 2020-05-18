@@ -32,9 +32,9 @@ elemNum(4,:) = sort(nnn{1,2}(:));
 GDof = 3 * numberNodes;
 
 Pmin = 1;
-Pmax = 1.1;
+Pmax = 2;
 hmin = 1;
-hmax = 1.1;
+hmax = 2;
 % % boundary conditions
 [prescribedDof, activeDof] = ...
         EssentialBC('cccc', GDof, xx, yy, nodeCoordinates, numberNodes);
@@ -68,14 +68,14 @@ for i = 1:outer
         % deformed shape
         % figure
         % plot3(xx,yy,displacements(1:numberNodes),'.')
-        umax(i,j) = max(displacements(1:numberNodes));
-        if umax(i,j) ~= displacements(maxNode)
+        [umax(i,j),idx] = max(displacements(1:numberNodes));
+        if idx ~= maxNode
             error('Different node')
         end
     end
     toc
 end
-writematrix(umax,'Ex3_umax_cccc_10x10_10_11.txt');
+writematrix(umax,'Ex3_umax_cccc_10x10_10_20.txt');
 
 m = max(umax(:));
 fprintf('m: %f\n',m);
