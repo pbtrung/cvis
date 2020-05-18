@@ -41,7 +41,7 @@ hmax = 2;
 
 outer = 1000;
 inner = 1000;
-maxNode = (numberNodes+1)/2;
+midNode = (numberNodes+1)/2;
 umax(1:outer,1:inner) = 0;
 
 for i = 1:outer
@@ -68,9 +68,10 @@ for i = 1:outer
         % deformed shape
         % figure
         % plot3(xx,yy,displacements(1:numberNodes),'.')
-        [umax(i,j),idx] = max(displacements(1:numberNodes));
-        if idx ~= maxNode
-            error('Different node')
+        [M,idx] = max(displacements(1:numberNodes));
+        umax(i,j) = displacements(midNode);
+        if idx ~= midNode
+            fprintf('idx ~= midNode')
         end
     end
     toc

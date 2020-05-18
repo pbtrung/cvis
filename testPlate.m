@@ -15,8 +15,8 @@ kapa = 5 / 6;
 
 % Mesh generation
 L = 1;
-numberElementsX = 30;
-numberElementsY = 30;
+numberElementsX = 4;
+numberElementsY = 4;
 if numberElementsX ~= numberElementsY || mod(numberElementsX,2) ~= 0
     error("Check numberElementsX and numberElementsY")
 end
@@ -37,8 +37,8 @@ elemNum(4,:) = sort(nnn{1,2}(:));
 % GDof: global number of degrees of freedom
 GDof = 3 * numberNodes;
 
-P = 2*ones(1,4);
-h = 0.05*ones(1,4);
+P = ones(1,4);
+h = 0.1*ones(1,4);
 % boundary conditions
 [prescribedDof, activeDof] = ...
         EssentialBC('cccc', GDof, xx, yy, nodeCoordinates, numberNodes);
@@ -51,3 +51,4 @@ h = 0.05*ones(1,4);
 % solution
 displacements = solution(GDof, prescribedDof, stiffness, force);
 [M,I]=max(displacements(1:numberNodes))
+(numberNodes+1)/2
