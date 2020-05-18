@@ -76,7 +76,7 @@ for i = 1:outer
     end
     toc
 end
-writematrix(umax,'Ex3_umax_cccc_10x10_10_20.txt');
+writematrix(umax,'Ex3_umax_cccc_10x10_10_20_midNode.txt');
 
 m = max(umax(:));
 fprintf('m: %f\n',m);
@@ -91,6 +91,6 @@ for j = 1:length(l)
     Uvar(j) = var(mean(lm(j)-umax<0,2));
 end
 
-writematrix(lm','plate_lm.txt');
-writematrix(Umean','plate_Umean.txt');
-writematrix(Uvar','plate_Uvar.txt');
+writematrix(lm','plate_lm_midNode.txt');
+writematrix(Umean','plate_Umean_midNode.txt');
+writematrix(Uvar','plate_Uvar_midNode.txt');
