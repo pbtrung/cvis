@@ -71,7 +71,7 @@ for i = 1:outer
         [M,idx] = max(displacements(1:numberNodes));
         umax(i,j) = displacements(midNode);
         if idx ~= midNode
-            fprintf('idx ~= midNode')
+            fprintf('idx ~= midNode\n')
         end
     end
     toc
