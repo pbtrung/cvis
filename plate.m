@@ -9,8 +9,8 @@ kapa = 5 / 6;
 
 % Mesh generation
 L = 1;
-numberElementsX = 10;
-numberElementsY = 10;
+numberElementsX = 20;
+numberElementsY = 20;
 if numberElementsX ~= numberElementsY || mod(numberElementsX,2) ~= 0
     error("Check numberElementsX and numberElementsY")
 end
@@ -77,7 +77,7 @@ for i = 1:outer
     end
     toc
 end
-writematrix(umax,'Ex3_umax_cccc_10x10_10_20_midNode.txt');
+writematrix(umax,'Ex3_umax_cccc_20x20_10_20_midNode.txt');
 
 m = max(umax(:));
 fprintf('m: %f\n',m);
@@ -92,6 +92,6 @@ for j = 1:length(l)
     Uvar(j) = var(mean(lm(j)-umax<0,2));
 end
 
-writematrix(lm','plate_lm_midNode.txt');
-writematrix(Umean','plate_Umean_midNode.txt');
-writematrix(Uvar','plate_Uvar_midNode.txt');
+writematrix(lm','plate_lm_20x20_midNode.txt');
+writematrix(Umean','plate_Umean_20x20_midNode.txt');
+writematrix(Uvar','plate_Uvar_20x20_midNode.txt');
