@@ -42,12 +42,15 @@ function cvis_ce()
     % CE method
     N      = 5000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
-    k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
+    k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
     nsamples = 100;
     
     % limit state function
     g = @(x) Q1(x');
     [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
+    size(mu_hat)
+    size(Si_hat)
+    size(Pi_hat)
     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
     qce = @(x) pdf(gm,x);
     
