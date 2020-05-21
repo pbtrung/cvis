@@ -5,17 +5,17 @@ function cvis_ce()
 
     nelx = 30;
     nely = 30;
-    nelx1 = 10;
-    nely1 = 10;
+    nelx1 = 20;
+    nely1 = 20;
     if nelx ~= nely || mod(nelx,2) ~= 0 || nelx1 ~= nely1 || mod(nelx1,2) ~= 0
         error("Check inputs")
     end
         
-    l0 = 0.013103;
-    l1 = 0.011231;
+    l0 = 0.013165;
+    l1 = 0.011284;
 %     EQ0 = 
 %     VQ0 = 
-    EQ1 = 0.011114;
+    EQ1 = 0.011165;
     
     % x(nsamples,8)
     Q0 = @(x) l0-FE_plate(nelx,nely,x);
@@ -48,9 +48,6 @@ function cvis_ce()
     % limit state function
     g = @(x) Q1(x');
     [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
-    size(mu_hat)
-    size(Si_hat)
-    size(Pi_hat)
     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
     qce = @(x) pdf(gm,x);
     
@@ -76,7 +73,7 @@ function cvis_ce()
 %     me = m0+a*(m1-EQ1);
       
 %     EQ0
-    EQ1
+%     EQ1
     
 %     display('EQ0./m0')
 %     EQ0./m0
