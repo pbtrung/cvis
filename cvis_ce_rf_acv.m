@@ -143,7 +143,7 @@ function cvis_ce_rf_acv()
     
     figure(2)
     hold on
-    plot(a,ve./v0,'-o',a,ve_acv1./v0,'-o',a,ve_acv2./v0,'-o',a,ones(1,length(a)),'--*')
+    plot(a,ve./v0,'-s',a,ve_acv1./v0,'-v',a,ve_acv2./v0,'-d',a,ones(1,length(a)),'-o')
     legend('v_e/v_0','v_1/v_0','v_2/v_0')
     xlabel('alpha')
     hold off
