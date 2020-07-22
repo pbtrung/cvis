@@ -1,8 +1,8 @@
-function cvis_rs_tols()
+function cvis_rs_tols(path)
     
-    dfile = '~/results.txt';
+    dfile = append(path,'results.txt');
     if exist(dfile, 'file')
-        delete(dfile); 
+        delete(dfile);
     end
     diary(dfile);
     
@@ -102,8 +102,8 @@ function cvis_rs_tols()
     set(0,'defaultLineLineWidth',0.7);
     set(0,'defaultLineMarkerSize',2);
     fontsize = 8;
-    width = 3;
-    height = 3;
+    width = 2.5;
+    height = 2.5;
     
     figs(1) = figure('Units','inches',...
         'Position',[0 0 width height],...
@@ -116,7 +116,7 @@ function cvis_rs_tols()
         'FontUnits','points',...
         'FontWeight','normal',...
         'FontSize',fontsize,...
-        'FontName','Times')
+        'FontName','Times','Box','on')
     legend({'$\min(v_e/v_0)$','KL Divergence','Covariance$\times 10^7$'},...
         'interpreter','latex',...
         'FontSize',fontsize,...
@@ -138,7 +138,7 @@ function cvis_rs_tols()
     
     for k = 1:length(figs)
         % print each figure in figs to a separate .eps file
-        print(figs(k), '-depsc2', sprintf('%s', fn(k)))
+        print(figs(k), '-depsc2', sprintf('%s', append(path,fn(k))))
     end
     
 end

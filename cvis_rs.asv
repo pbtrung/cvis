@@ -1,4 +1,4 @@
-function cvis_rs(path)
+function cvis_rs()
     
     format long;
     rng('default');
@@ -22,7 +22,7 @@ function cvis_rs(path)
     wQ0s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     
-    nsamples = 10000;
+    nsamples = 1000;
     umin = 0;
     umax = 7;
     
@@ -113,7 +113,7 @@ function cvis_rs(path)
     
     figs(2) = figure('Units','inches',...
         'Position',[0 0 width height],...
-        'visible','on',...
+        'visible','off',...
         'PaperPositionMode','auto');
     hold on
     plot(a,ve./v0,'-o',a,ones(1,length(a)),'-o')
@@ -122,12 +122,12 @@ function cvis_rs(path)
         'FontUnits','points',...
         'FontWeight','normal',...
         'FontSize',fontsize,...
-        'FontName','Times','Box','on')
+        'FontName','Times')
     legend({'$v_e/v_0$'},...
         'interpreter','latex',...
         'FontSize',fontsize,...
         'FontName','Times',...
-        'Location','North')
+        'Location','NorthEast')
     ylabel('Variance ratio',...
         'FontUnits','points',...
         'interpreter','latex',...
@@ -140,7 +140,6 @@ function cvis_rs(path)
         'FontSize',fontsize,...
         'FontName','Times')
     fn(2) = "ve_v0.eps";
-    ylim([0.42 2.5])
     hold off
     
     figs(3) = figure('Units','inches',...
@@ -176,7 +175,7 @@ function cvis_rs(path)
     
     for k = 1:length(figs)
         % print each figure in figs to a separate .eps file
-        print(figs(k), '-depsc2', sprintf('%s', append(path,fn(k))))
+        print(figs(k), '-depsc2', sprintf('%s', fn(k)))
     end
     
 end
