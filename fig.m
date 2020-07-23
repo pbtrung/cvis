@@ -1,7 +1,9 @@
-function fig(p0,p1)
+function fig(path,p0,p1,p1_acv1,p1_acv2)
 
     wQ0s = readmatrix(p0);
     wQ1s = readmatrix(p1);
+    wQ1s_acv1 = readmatrix(p1_acv1);
+    wQ1s_acv2 = readmatrix(p1_acv2);
     
     EQ0 = 0.001173;
     VQ0 = 1.186257257257260e-06;
@@ -9,12 +11,20 @@ function fig(p0,p1)
     
     m0 = mean(wQ0s);
     m1 = mean(wQ1s);
-
+    
+    a = linspace(-1.5,0.5,33);
+    
     covar = cov(wQ0s,wQ1s);
+    covar_acv1 = cov(wQ1s,wQ1s_acv1);
+    covar_acv2 = cov(wQ1s,wQ1s_acv2);
+    covar_0acv2 = cov(wQ0s,wQ1s_acv2);
     v0 = covar(1,1);
     v1 = covar(2,2);
-    a = linspace(-1.5,0.5,33);
-    ve = v0+a.^2*v1+2*a*covar(1,2);
+    v_acv1 = covar_acv1(2,2);
+    v_acv2 = covar_acv2(2,2);
+    ve = v0 + a.^2*v1 + 2*a*covar(1,2);
+    ve_acv1 = v0 + a.^2*(v1+v_acv1) + 2*a*covar(1,2);
+    ve_acv2 = v0 + a.^2*(v1+v_acv2-2*covar_acv2(1,2)) + 2*a*(covar(1,2)-covar_0acv2(1,2));
         
     set(0,'defaultLineLineWidth',0.7);
     set(0,'defaultLineMarkerSize',2);
@@ -22,6 +32,9 @@ function fig(p0,p1)
     width = 2.5;
     height = 2.5;
     
+    ve'./v0
+    ve_acv1'./v0
+    ve_acv2'./v0
     
     figs(1) = figure('Units','inches',...
         'Position',[0 0 width height],...
@@ -56,21 +69,21 @@ function fig(p0,p1)
     
     figs(2) = figure('Units','inches',...
         'Position',[0 0 width height],...
-        'visible','off',...
+        'visible','on',...
         'PaperPositionMode','auto');
     hold on
-    plot(a,ve./v0,'-o',a,ones(1,length(a)),'-o');
+    plot(a,ve./v0,'-d',a,ve_acv1./v0,'-v',a,ve_acv2./v0,'-s',a,ones(1,length(a)),'-o');
     set(gca,...
         'Units','normalized',...
         'FontUnits','points',...
         'FontWeight','normal',...
         'FontSize',fontsize,...
-        'FontName','Times')
-    legend({'$v_e/v_0$'},...
+        'FontName','Times','Box','on')
+    legend({'$v_e/v_0$','$v_1/v_0$','$v_2/v_0$'},...
         'interpreter','latex',...
         'FontSize',fontsize,...
         'FontName','Times',...
-        'Location','NorthEast')
+        'Location','North')
     ylabel('Variance ratio',...
         'FontUnits','points',...
         'interpreter','latex',...
@@ -82,7 +95,7 @@ function fig(p0,p1)
         'FontWeight','normal',...
         'FontSize',fontsize,...
         'FontName','Times')
-    fn(2) = "ve_v0.eps";
+    fn(2) = "ve_v0_acv.eps";
     hold off
     
     figs(3) = figure('Units','inches',...
@@ -118,7 +131,7 @@ function fig(p0,p1)
     
     for k = 1:length(figs)
         % print each figure in figs to a separate .eps file  
-        print(figs(k), '-depsc2', sprintf('%s', fn(k)))
+        print(figs(k), '-depsc2', sprintf('%s', append(path,fn(k))))
     end
     
 end
