@@ -72,13 +72,13 @@ function cvis_ce_acv()
         samples_acv1 = random(gm,acv1_nsamples);
         w_acv1 = mvnpdf(samples_acv1,zeros(1,d),eye(d))./qce(samples_acv1);
         samples_acv1 = u2x(samples_acv1);
-        Q1s_acv1 = Q1(samples_acv1')<0;
+        Q1s_acv1 = Q1(samples_acv1)<0;
         wQ1s_acv1(j) = mean(w_acv1.*Q1s_acv1);
         
         samples_acv2 = random(gm,acv2_nsamples);
         w_acv2 = mvnpdf(samples_acv2,zeros(1,d),eye(d))./qce(samples_acv2);
         samples_acv2 = u2x(samples_acv2);
-        Q1s_acv2 = Q1(samples_acv2')<0;
+        Q1s_acv2 = Q1(samples_acv2)<0;
         wQ1s_acv2(j) = (sum(w.*Q1s)+sum(w_acv2.*Q1s_acv2))/(nsamples+acv2_nsamples);
     end
     writematrix(wQ0s,'wQ0s.txt');
