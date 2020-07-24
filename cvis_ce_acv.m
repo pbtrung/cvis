@@ -94,17 +94,17 @@ function cvis_ce_acv()
     me_acv1 = m0+a*(m1-m1_acv1);
     me_acv2 = m0+a*(m1-m1_acv2);
       
-    EQ0
-    EQ1
-    
-    display('EQ0./m0')
-    EQ0./m0
-    display('EQ0./me')
-    EQ0./me'
-    display('EQ0./me_acv1')
-    EQ0./me_acv1'
-    display('EQ0./me_acv2')
-    EQ0./me_acv2'
+%     EQ0
+%     EQ1
+%     
+%     display('EQ0./m0')
+%     EQ0./m0
+%     display('EQ0./me')
+%     EQ0./me'
+%     display('EQ0./me_acv1')
+%     EQ0./me_acv1'
+%     display('EQ0./me_acv2')
+%     EQ0./me_acv2'
     
     covar = cov(wQ0s,wQ1s);
     covar_acv1 = cov(wQ1s,wQ1s_acv1);
@@ -118,10 +118,10 @@ function cvis_ce_acv()
     ve_acv1 = v0 + a.^2*(v1+v_acv1) + 2*a*covar(1,2);
     ve_acv2 = v0 + a.^2*(v1+v_acv2-2*covar_acv2(1,2)) + 2*a*(covar(1,2)-covar_0acv2(1,2));
       
-    display('VQ0/v0')
-    VQ0/v0
-    display('VQ0./ve')
-    VQ0./ve'
+%     display('VQ0/v0')
+%     VQ0/v0
+%     display('VQ0./ve')
+%     VQ0./ve'
     display('ve./v0')
     ve./v0
     display('ve_acv1./v0')
