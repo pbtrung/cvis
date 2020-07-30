@@ -47,7 +47,7 @@ function cvis_ce_acv()
     k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
     nsamples = 100;
     acv1_nsamples = 100;
-    acv2_nsamples = 100;
+    acv2_nsamples = 100/2;
     
     % limit state function
     g = @(x) Q1(x');
