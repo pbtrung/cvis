@@ -24,6 +24,7 @@ function cvis_ce_acv()
     a = linspace(-1.5,0.5,33);
     ansamples = 1000;
     wQ0s(1:ansamples) = 0;
+    sumwQ1s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     wQ1s_acv1(1:ansamples) = 0;
     wQ1s_acv2(1:ansamples) = 0;
@@ -66,20 +67,23 @@ function cvis_ce_acv()
         Q1s = Q1(samples)<0;
 
         wQ0s(j) = mean(w.*Q0s);
-        wQ1s(j) = mean(w.*Q1s);
+        sumwQ1s(j) = sum(w.*Q1s);
+        wQ1s(j) = sumwQ1s(j)/nsamples;
         toc
-        
+    end
+    for j = 1:ansamples
         samples_acv1 = random(gm,acv1_nsamples);
         w_acv1 = mvnpdf(samples_acv1,zeros(1,d),eye(d))./qce(samples_acv1);
         samples_acv1 = u2x(samples_acv1);
         Q1s_acv1 = Q1(samples_acv1)<0;
         wQ1s_acv1(j) = mean(w_acv1.*Q1s_acv1);
-        
+    end
+    for j = 1:ansamples
         samples_acv2 = random(gm,acv2_nsamples);
         w_acv2 = mvnpdf(samples_acv2,zeros(1,d),eye(d))./qce(samples_acv2);
         samples_acv2 = u2x(samples_acv2);
         Q1s_acv2 = Q1(samples_acv2)<0;
-        wQ1s_acv2(j) = (sum(w.*Q1s)+sum(w_acv2.*Q1s_acv2))/(nsamples+acv2_nsamples);
+        wQ1s_acv2(j) = (sumwQ1s(j)+sum(w_acv2.*Q1s_acv2))/(nsamples+acv2_nsamples);
     end
     writematrix(wQ0s,'wQ0s.txt');
     writematrix(wQ1s,'wQ1s.txt');
