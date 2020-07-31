@@ -45,9 +45,9 @@ function cvis_ce_acv()
     N      = 5000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
-    nsamples = 100;
-    acv1_nsamples = 100;
-    acv2_nsamples = 100/2;
+    nsamples = 200;
+    acv1_nsamples = 200;
+    acv2_nsamples = 200/2;
     
     % limit state function
     g = @(x) Q1(x');
