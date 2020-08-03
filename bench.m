@@ -23,6 +23,8 @@ end
 
 function EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,a,b)
 
+    t0 = 0;
+    t1 = 0;
     force = 1;
     Uy(1:outer,1:inner) = 0;
     dof = 2*(nely+1)*nelx+2;
@@ -42,11 +44,11 @@ function EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,a,b)
         end
         tic
         for j = 1:inner
-            fprintf('Uy, outer: %d, inner: %d\n',i,j);
+%             fprintf('Uy, outer: %d, inner: %d\n',i,j);
             U = FErf(lx,ly,nelx,nely,dof,force,E(:,:,j));
             Uy(i,j) = U(dof);
         end
-        toc
+        t0 = toc
     end
     
     Uy(1:outer,1:inner) = 0;
@@ -60,11 +62,13 @@ function EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,a,b)
         end
         tic
         for j = 1:inner
-            fprintf('Uy1, outer: %d, inner: %d\n',i,j);
+%             fprintf('Uy1, outer: %d, inner: %d\n',i,j);
             U = FErf1(lx,ly,nelx1,nely1,dof,force,E1(j));
             Uy(i,j) = U(dof);
         end
-        toc
+        t1 = toc
     end
+    
+    t1/t0
     
 end
