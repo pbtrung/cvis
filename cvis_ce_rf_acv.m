@@ -56,16 +56,16 @@ function cvis_ce_rf_acv()
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
     
     ns_mfis = 200;
-    ns_Q0_cv = 190;
-    ns_Q1_cv = 100;
+    ns_Q0_cv = 182;
+    ns_Q1_cv = 182;
     
-    ns_Q0_acv1 = 180;
-    ns_Q1_acv1 = 100;
-    ns_mu_acv1 = 100;
+    ns_Q0_acv1 = 170;
+    ns_Q1_acv1 = 170;
+    ns_mu_acv1 = 130;
     
-    ns_Q0_acv2 = 180;
-    ns_Q1_acv2 = 100;
-    ns_mu_acv2 = 100;
+    ns_Q0_acv2 = 170;
+    ns_Q1_acv2 = 170;
+    ns_mu_acv2 = 130;
      
     % limit state function
     g = @(x) Q1(x);
