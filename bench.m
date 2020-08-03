@@ -15,18 +15,17 @@ function bench()
     upper = 2;
     
     [Psi,lambda,PsiE1] = KL(lx,ly,Lx,Ly,nelx,nely,2);
-    outer = 1;
-    inner = 100;
+    outer = 100;
+    inner = 10;
     EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,lower,upper);
 
 end
 
 function EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,a,b)
 
-    t0 = 0;
-    t1 = 0;
+    t0(1:outer) = 0;
+    t1(1:outer) = 0;
     force = 1;
-    Uy(1:outer,1:inner) = 0;
     dof = 2*(nely+1)*nelx+2;
     
     neig = length(lambda);
@@ -45,13 +44,12 @@ function EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,a,b)
         tic
         for j = 1:inner
 %             fprintf('Uy, outer: %d, inner: %d\n',i,j);
-            U = FErf(lx,ly,nelx,nely,dof,force,E(:,:,j));
+            FErf(lx,ly,nelx,nely,dof,force,E(:,:,j));
 %             Uy(i,j) = U(dof);
         end
-        t0 = toc
+        t0(i) = toc;
     end
     
-    Uy(1:outer,1:inner) = 0;
     dof = 2*(nely1+1)*nelx1+2;
     for i = 1:outer
         E1(1:inner) = 0;
@@ -63,12 +61,12 @@ function EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,a,b)
         tic
         for j = 1:inner
 %             fprintf('Uy1, outer: %d, inner: %d\n',i,j);
-            U = FErf1(lx,ly,nelx1,nely1,dof,force,E1(j));
+            FErf1(lx,ly,nelx1,nely1,dof,force,E1(j));
 %             Uy(i,j) = U(dof);
         end
-        t1 = toc
+        t1(i) = toc;
     end
     
-    t1/t0
+    mean(t1)/mean(t0)
     
 end
