@@ -42,13 +42,13 @@ function cvis_ce_acv(path)
     ns_Q0_cv = 910;
     ns_Q1_cv = 910;
     
-    ns_Q0_acv1 = 820;
-    ns_Q1_acv1 = 820;
-    ns_mu_acv1 = 1000;
+    ns_Q0_acv1 = 850;
+    ns_Q1_acv1 = 850;
+    ns_mu_acv1 = 650;
     
-    ns_Q0_acv2 = 820;
-    ns_Q1_acv2 = 820;
-    ns_mu_acv2 = 1000;
+    ns_Q0_acv2 = 850;
+    ns_Q1_acv2 = 850;
+    ns_mu_acv2 = 650;
         
     % limit state function
     g = @(x) Q1(x);
