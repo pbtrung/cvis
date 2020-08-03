@@ -46,7 +46,7 @@ function EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,a,b)
         for j = 1:inner
 %             fprintf('Uy, outer: %d, inner: %d\n',i,j);
             U = FErf(lx,ly,nelx,nely,dof,force,E(:,:,j));
-            Uy(i,j) = U(dof);
+%             Uy(i,j) = U(dof);
         end
         t0 = toc
     end
@@ -64,7 +64,7 @@ function EQ_EQ1(lx,ly,nelx,nely,nelx1,nely1,outer,inner,Psi,lambda,PsiE1,a,b)
         for j = 1:inner
 %             fprintf('Uy1, outer: %d, inner: %d\n',i,j);
             U = FErf1(lx,ly,nelx1,nely1,dof,force,E1(j));
-            Uy(i,j) = U(dof);
+%             Uy(i,j) = U(dof);
         end
         t1 = toc
     end
