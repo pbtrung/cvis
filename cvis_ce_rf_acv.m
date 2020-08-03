@@ -37,11 +37,16 @@ function cvis_ce_rf_acv()
     Q1 = @(x) l1-FEQ1(lx,ly,nelx1,nely1,dof1,force,x,PsiE1,L,lower,upper)';
         
     a = linspace(-1.5,0.5,33);
-    ansamples = 1000;
-    wQ0s(1:ansamples) = 0;
-    wQ1s(1:ansamples) = 0;
-    wQ1s_acv1(1:ansamples) = 0;
-    wQ1s_acv2(1:ansamples) = 0;
+    K = 1000;
+    wQ0s(1:K) = 0;
+    wQ0s_cv(1:K) = 0;
+    wQ1s_cv(1:K) = 0;
+    wQ0s_acv1(1:K) = 0;
+    wQ1s_acv1(1:K) = 0;
+    mu_acv1(1:K) = 0;
+    wQ0s_acv2(1:K) = 0;
+    wQ1s_acv2(1:K) = 0;
+    mu_acv2(1:K) = 0;
     
     % definition of the random variables
     d      = neig;
@@ -51,9 +56,18 @@ function cvis_ce_rf_acv()
     N      = 5000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
-    nsamples = 100;
-    acv1_nsamples = 100;
-    acv2_nsamples = 100;
+    
+    ns_mfis = 1000;
+    ns_Q0_cv = 950;
+    ns_Q1_cv = 500;
+    
+    ns_Q0_acv1 = 900;
+    ns_Q1_acv1 = 500;
+    ns_mu_acv1 = 500;
+    
+    ns_Q0_acv2 = 900;
+    ns_Q1_acv2 = 500;
+    ns_mu_acv2 = 500;
      
     % limit state function
     g = @(x) Q1(x);
@@ -63,7 +77,7 @@ function cvis_ce_rf_acv()
     
     mu = zeros(1,neig);
     stdd = eye(neig);
-    for j = 1:ansamples
+    for j = 1:K
         fprintf('ansamples: %d\n',j);
         tic
         samples = random(gm,nsamples);
