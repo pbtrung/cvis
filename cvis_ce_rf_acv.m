@@ -51,21 +51,21 @@ function cvis_ce_rf_acv()
     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
     
     % CE method
-    N      = 5000;    % total number of samples for each level
+    N      = 3000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
-    k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
+    k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
     
-    ns_mfis = 200;
-    ns_Q0_cv = 182;
-    ns_Q1_cv = 182;
+    ns_mfis = 400;
+    ns_Q0_cv = 364;
+    ns_Q1_cv = 364;
     
-    ns_Q0_acv1 = 168;
-    ns_Q1_acv1 = 168;
-    ns_mu_acv1 = 160;
+    ns_Q0_acv1 = 335;
+    ns_Q1_acv1 = 335;
+    ns_mu_acv1 = 320;
     
-    ns_Q0_acv2 = 173;
-    ns_Q1_acv2 = 173;
-    ns_mu_acv2 = 100;
+    ns_Q0_acv2 = 346;
+    ns_Q1_acv2 = 346;
+    ns_mu_acv2 = 200;
      
     % limit state function
     g = @(x) Q1(x);
