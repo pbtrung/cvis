@@ -39,13 +39,16 @@ function cvis_ce_acv(path)
     k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
     
     ns_mfis = 1000;
-    ns_cv = 910;
+    ns_Q0_cv = 910;
+    ns_Q1_cv = 910;
     
-    ns_acv1 = 800;
-    ns_mu_acv1 = 1200;
+    ns_Q0_acv1 = 819;
+    ns_Q1_acv1 = 819;
+    ns_mu_acv1 = 1000;
     
-    ns_acv2 = 850;
-    ns_mu_acv2 = 650;
+    ns_Q0_acv2 = 819;
+    ns_Q1_acv2 = 819;
+    ns_mu_acv2 = 1000;
         
     % limit state function
     g = @(x) Q1(x);
@@ -55,41 +58,29 @@ function cvis_ce_acv(path)
 
     for j = 1:K
         ss = random(gm,ns_mfis);
-        Q0s = Q0(ss)<0;
+        Q0s = Q0(ss(:))<0;
         w = mvnpdf(ss,mu,std)./qce(ss);
         wQ0s(j) = mean(w.*Q0s);
-    end
-    for j = 1:K
-        ss = random(gm,ns_cv);
-        Q0s = Q0(ss)<0;
-        w = mvnpdf(ss,mu,std)./qce(ss);
-        wQ0s_cv(j) = mean(w.*Q0s);
-        Q1s = Q1(ss)<0;
-        wQ1s_cv(j) = mean(w.*Q1s);
-    end
-    for j = 1:K
-        ss = random(gm,ns_acv1);
-        Q0s = Q0(ss)<0;
-        w = mvnpdf(ss,mu,std)./qce(ss);
-        wQ0s_acv1(j) = mean(w.*Q0s);
-        Q1s_acv1 = Q1(ss)<0;
-        wQ1s_acv1(j) = mean(w.*Q1s_acv1);
+        
+        wQ0s_cv(j) = mean(w(1:ns_Q0_cv).*Q0s(1:ns_Q0_cv));
+        Q1s = Q1(ss(1:ns_Q1_cv))<0;
+        wQ1s_cv(j) = mean(w(1:ns_Q1_cv).*Q1s(1:ns_Q1_cv));
+        
+        wQ0s_acv1(j) = mean(w(1:ns_Q0_acv1).*Q0s(1:ns_Q0_acv1));
+        Q1s_acv1 = Q1(ss(1:ns_Q1_acv1))<0;
+        wQ1s_acv1(j) = mean(w(1:ns_Q1_acv1).*Q1s_acv1(1:ns_Q1_acv1));
         ss_mu_acv1 = random(gm,ns_mu_acv1);
-        Q1s_mu_acv1 = Q1(ss_mu_acv1(:))<0;
+        Q1s_mu_acv1 = Q1(ss_mu_acv1)<0;
         w_mu_acv1 = mvnpdf(ss_mu_acv1,mu,std)./qce(ss_mu_acv1);
-        mu_acv1(j) = mean(w_mu_acv1.*Q1s_mu_acv1);
-    end
-    for j = 1:K
-        ss = random(gm,ns_acv2);
-        Q0s = Q0(ss)<0;
-        w = mvnpdf(ss,mu,std)./qce(ss);
-        wQ0s_acv2(j) = mean(w.*Q0s);
-        Q1s_acv2 = Q1(ss)<0;
-        wQ1s_acv2(j) = mean(w.*Q1s_acv2);
+        mu_acv1(j) = mean(w_mu_acv1(1:ns_mu_acv1).*Q1s_mu_acv1(1:ns_mu_acv1));
+        
+        wQ0s_acv2(j) = mean(w(1:ns_Q0_acv2).*Q0s(1:ns_Q0_acv2));
+        Q1s_acv2 = Q1(ss(1:ns_Q1_acv2))<0;
+        wQ1s_acv2(j) = mean(w(1:ns_Q1_acv2).*Q1s_acv2(1:ns_Q1_acv2));
         ss_mu_acv2 = random(gm,ns_mu_acv2);
         Q1s_mu_acv2 = Q1(ss_mu_acv2)<0;
         w_mu_acv2 = mvnpdf(ss_mu_acv2,mu,std)./qce(ss_mu_acv2);
-        mu_acv2(j) = (sum(w.*Q1s_acv2)+sum(w_mu_acv2.*Q1s_mu_acv2))/(ns_acv2+ns_mu_acv2);
+        mu_acv2(j) = (sum(w(1:ns_Q1_acv2).*Q1s_acv2(1:ns_Q1_acv2))+sum(w_mu_acv2(1:ns_mu_acv2).*Q1s_mu_acv2(1:ns_mu_acv2)))/(ns_Q1_acv2+ns_mu_acv2);
     end
     
     writematrix(wQ0s,append(path,'wQ0s.txt'));
