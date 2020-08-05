@@ -69,6 +69,8 @@ function bench30()
         fprintf('t(%d) = %10.10f\n',i,t(i));
     end
     
-    mean(t) % = 6.519533150000000
+    mean(t) 
+    % = 6.519533150000000
+    % bench30/bench20 = 3.007706304571088
 
 end

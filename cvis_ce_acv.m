@@ -15,19 +15,24 @@ function cvis_ce_acv()
     l1 = 0.011284;
 %     EQ0 = 
 %     VQ0 = 
-    EQ1 = 0.011165;
+%     EQ1 = 0.011165;
     
     % x(nsamples,8)
     Q0 = @(x) l0-FE_plate(nelx,nely,x);
     Q1 = @(x) l1-FE_plate(nelx1,nely1,x);
     
     a = linspace(-1.5,0.5,33);
-    ansamples = 1000;
-    wQ0s(1:ansamples) = 0;
-    sumwQ1s(1:ansamples) = 0;
-    wQ1s(1:ansamples) = 0;
-    wQ1s_acv1(1:ansamples) = 0;
-    wQ1s_acv2(1:ansamples) = 0;
+    K = 1000;
+    
+    wQ0s(1:K) = 0;
+    wQ0s_cv(1:K) = 0;
+    wQ1s_cv(1:K) = 0;
+    wQ0s_acv1(1:K) = 0;
+    wQ1s_acv1(1:K) = 0;
+    mu_acv1(1:K) = 0;
+    wQ0s_acv2(1:K) = 0;
+    wQ1s_acv2(1:K) = 0;
+    mu_acv2(1:K) = 0;
     
     % definition of the random variables
     d = 8;
@@ -46,9 +51,18 @@ function cvis_ce_acv()
     N      = 5000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
     k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
-    nsamples = 200;
-    acv1_nsamples = 200;
-    acv2_nsamples = 200/2;
+    
+    ns_mfis = 200;
+    ns_Q0_cv = 150;
+    ns_Q1_cv = 150;
+    
+    ns_Q0_acv1 = 100;
+    ns_Q1_acv1 = 100;
+    ns_mu_acv1 = 200;
+    
+    ns_Q0_acv2 = 125;
+    ns_Q1_acv2 = 125;
+    ns_mu_acv2 = 100;
     
     % limit state function
     g = @(x) Q1(x');
@@ -56,82 +70,86 @@ function cvis_ce_acv()
     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
     qce = @(x) pdf(gm,x);
     
-    for j = 1:ansamples
-        fprintf('ansamples: %d\n',j);
+    for j = 1:K
+        fprintf('K: %d\n',j);
         tic
-        samples = random(gm,nsamples);
-        
-        w = mvnpdf(samples,zeros(1,d),eye(d))./qce(samples);
-        samples = u2x(samples);
-        Q0s = Q0(samples)<0;
-        Q1s = Q1(samples)<0;
-
+        ss = random(gm,ns_mfis);
+        w = mvnpdf(ss,zeros(1,d),eye(d))./qce(ss);
+        ss = u2x(ss);
+        Q0s = Q0(ss)<0;
         wQ0s(j) = mean(w.*Q0s);
-        sumwQ1s(j) = sum(w.*Q1s);
-        wQ1s(j) = sumwQ1s(j)/nsamples;
         toc
-    end
-    for j = 1:ansamples
-        samples_acv1 = random(gm,acv1_nsamples);
-        w_acv1 = mvnpdf(samples_acv1,zeros(1,d),eye(d))./qce(samples_acv1);
-        samples_acv1 = u2x(samples_acv1);
-        Q1s_acv1 = Q1(samples_acv1)<0;
-        wQ1s_acv1(j) = mean(w_acv1.*Q1s_acv1);
-    end
-    for j = 1:ansamples
-        samples_acv2 = random(gm,acv2_nsamples);
-        w_acv2 = mvnpdf(samples_acv2,zeros(1,d),eye(d))./qce(samples_acv2);
-        samples_acv2 = u2x(samples_acv2);
-        Q1s_acv2 = Q1(samples_acv2)<0;
-        wQ1s_acv2(j) = (sumwQ1s(j)+sum(w_acv2.*Q1s_acv2))/(nsamples+acv2_nsamples);
+        
+        wQ0s_cv(j) = mean(w(1:ns_Q0_cv).*Q0s(1:ns_Q0_cv));
+        Q1s = Q1(ss(1:ns_Q1_cv,:))<0;
+        wQ1s_cv(j) = mean(w(1:ns_Q1_cv).*Q1s(1:ns_Q1_cv));
+        
+        wQ0s_acv1(j) = mean(w(1:ns_Q0_acv1).*Q0s(1:ns_Q0_acv1));
+        Q1s_acv1 = Q1(ss(1:ns_Q1_acv1,:))<0;
+        wQ1s_acv1(j) = mean(w(1:ns_Q1_acv1).*Q1s_acv1(1:ns_Q1_acv1));
+        ss_mu_acv1 = random(gm,ns_mu_acv1);
+        w_mu_acv1 = mvnpdf(ss_mu_acv1,zeros(1,d),eye(d))./qce(ss_mu_acv1);
+        ss_mu_acv1 = u2x(ss_mu_acv1);
+        Q1s_mu_acv1 = Q1(ss_mu_acv1)<0;
+        mu_acv1(j) = mean(w_mu_acv1(1:ns_mu_acv1).*Q1s_mu_acv1(1:ns_mu_acv1));
+        
+        wQ0s_acv2(j) = mean(w(1:ns_Q0_acv2).*Q0s(1:ns_Q0_acv2));
+        Q1s_acv2 = Q1(ss(1:ns_Q1_acv2,:))<0;
+        wQ1s_acv2(j) = mean(w(1:ns_Q1_acv2).*Q1s_acv2(1:ns_Q1_acv2));
+        ss_mu_acv2 = random(gm,ns_mu_acv2);
+        w_mu_acv2 = mvnpdf(ss_mu_acv2,zeros(1,d),eye(d))./qce(ss_mu_acv2);
+        ss_mu_acv2 = u2x(ss_mu_acv2);
+        Q1s_mu_acv2 = Q1(ss_mu_acv2)<0;
+        mu_acv2(j) = (sum(w(1:ns_Q1_acv2).*Q1s_acv2(1:ns_Q1_acv2))+sum(w_mu_acv2(1:ns_mu_acv2).*Q1s_mu_acv2(1:ns_mu_acv2)))/(ns_Q1_acv2+ns_mu_acv2);
     end
     writematrix(wQ0s,'wQ0s.txt');
-    writematrix(wQ1s,'wQ1s.txt');
+    
+    writematrix(wQ0s_cv,'wQ0s_cv.txt');
+    writematrix(wQ1s_cv,'wQ1s_cv.txt');
+    
+    writematrix(wQ0s_acv1,'wQ0s_acv1.txt');
     writematrix(wQ1s_acv1,'wQ1s_acv1.txt');
+    writematrix(mu_acv1,'mu_acv1.txt');
+    
+    writematrix(wQ0s_acv2,'wQ0s_acv2.txt');
     writematrix(wQ1s_acv2,'wQ1s_acv2.txt');
+    writematrix(mu_acv2,'mu_acv2.txt');
     
-    m0 = mean(wQ0s);
-    m1 = mean(wQ1s);
-    m1_acv1 = mean(wQ1s_acv1);
-    m1_acv2 = mean(wQ1s_acv2);
-    me = m0+a*(m1-EQ1);
-    me_acv1 = m0+a*(m1-m1_acv1);
-    me_acv2 = m0+a*(m1-m1_acv2);
-      
-%     EQ0
-%     EQ1
-%     
-%     display('EQ0./m0')
-%     EQ0./m0
-%     display('EQ0./me')
-%     EQ0./me'
-%     display('EQ0./me_acv1')
-%     EQ0./me_acv1'
-%     display('EQ0./me_acv2')
-%     EQ0./me_acv2'
+    v0 = var(wQ0s);
+    cov_cv = cov(wQ0s_cv,wQ1s_cv);
+    v0_cv = cov_cv(1,1);
+    v1_cv = cov_cv(2,2);
+    ve = v0_cv + a.^2*v1_cv + 2*a*cov_cv(1,2);
     
-    covar = cov(wQ0s,wQ1s);
-    covar_acv1 = cov(wQ1s,wQ1s_acv1);
-    covar_acv2 = cov(wQ1s,wQ1s_acv2);
-    covar_0acv2 = cov(wQ0s,wQ1s_acv2);
-    v0 = covar(1,1);
-    v1 = covar(2,2);
-    v_acv1 = covar_acv1(2,2);
-    v_acv2 = covar_acv2(2,2);
-    ve = v0 + a.^2*v1 + 2*a*covar(1,2);
-    ve_acv1 = v0 + a.^2*(v1+v_acv1) + 2*a*covar(1,2);
-    ve_acv2 = v0 + a.^2*(v1+v_acv2-2*covar_acv2(1,2)) + 2*a*(covar(1,2)-covar_0acv2(1,2));
+    cov_acv1 = cov(wQ0s_acv1,wQ1s_acv1);
+    v0_acv1 = cov_acv1(1,1);
+    v1_acv1 = cov_acv1(2,2);
+    cov_Q1_mu_acv1 = cov(wQ1s_acv1,mu_acv1);
+    v_mu_acv1 = cov_Q1_mu_acv1(2,2);
+    ve_acv1 = v0_acv1 + a.^2*(v1_acv1+v_mu_acv1) + 2*a*cov_acv1(1,2);
+    
+    cov_acv2 = cov(wQ0s_acv2,wQ1s_acv2);
+    v0_acv2 = cov_acv2(1,1);
+    v1_acv2 = cov_acv2(2,2);
+    cov_Q1_mu_acv2 = cov(wQ1s_acv2,mu_acv2);
+    v_mu_acv2 = cov_Q1_mu_acv2(2,2);
+    cov_0acv2 = cov(wQ0s_acv2,mu_acv2);
+    ve_acv2 = v0_acv2 + a.^2*(v1_acv2+v_mu_acv2-2*cov_Q1_mu_acv2(1,2)) + 2*a*(cov_acv2(1,2)-cov_0acv2(1,2));
       
 %     display('VQ0/v0')
 %     VQ0/v0
 %     display('VQ0./ve')
 %     VQ0./ve'
     display('ve./v0')
-    ve./v0
+    ve'./v0
     display('ve_acv1./v0')
-    ve_acv1./v0
+    ve_acv1'./v0
     display('ve_acv2./v0')
-    ve_acv2./v0
+    ve_acv2'./v0
+    
+    min(ve'./v0)
+    min(ve_acv1'./v0)
+    min(ve_acv2'./v0)
     
 %     figure(1)
 %     hold on
