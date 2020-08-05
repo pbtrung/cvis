@@ -40,8 +40,8 @@ function bench20()
     [prescribedDof, ~] = ...
             EssentialBC('cccc', GDof, xx, yy, nodeCoordinates, numberNodes);
 
-    outer = 100;
-    inner = 10;    
+    outer = 10;
+    inner = 10;
     t(1:outer) = 0;
 
     for i = 1:outer
@@ -65,7 +65,7 @@ function bench20()
             % solution
             displacements = solution(GDof, prescribedDof, stiffness, force);
         end
-        t(i) = toc;
+        t(i) = toc
     end
     
     mean(t)
