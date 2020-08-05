@@ -63,9 +63,9 @@ function cvis_ce_rf_acv()
     ns_Q1_acv1 = 155;
     ns_mu_acv1 = 300;
     
-    ns_Q0_acv2 = 155;
-    ns_Q1_acv2 = 155;
-    ns_mu_acv2 = 300;
+    ns_Q0_acv2 = 169;
+    ns_Q1_acv2 = 169;
+    ns_mu_acv2 = 150;
      
     % limit state function
     g = @(x) Q1(x);
