@@ -78,7 +78,6 @@ function cvis_ce_acv()
         ss = u2x(ss);
         Q0s = Q0(ss)<0;
         wQ0s(j) = mean(w.*Q0s);
-        toc
         
         wQ0s_cv(j) = mean(w(1:ns_Q0_cv).*Q0s(1:ns_Q0_cv));
         Q1s = Q1(ss(1:ns_Q1_cv,:))<0;
@@ -101,6 +100,7 @@ function cvis_ce_acv()
         ss_mu_acv2 = u2x(ss_mu_acv2);
         Q1s_mu_acv2 = Q1(ss_mu_acv2)<0;
         mu_acv2(j) = (sum(w(1:ns_Q1_acv2).*Q1s_acv2(1:ns_Q1_acv2))+sum(w_mu_acv2(1:ns_mu_acv2).*Q1s_mu_acv2(1:ns_mu_acv2)))/(ns_Q1_acv2+ns_mu_acv2);
+        toc
     end
     writematrix(wQ0s,'wQ0s.txt');
     
