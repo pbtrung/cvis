@@ -51,9 +51,9 @@ function cvis_ce_rf_acv()
     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
     
     % CE method
-    N      = 3000;    % total number of samples for each level
+    N      = 5000;    % total number of samples for each level
     p      = 0.1;     % quantile value to select samples for parameter update
-    k_init = 3;       % initial number of distributions in the Mixture models (GM/vMFNM)
+    k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
     
     ns_mfis = 200;
     ns_Q0_cv = 182;
