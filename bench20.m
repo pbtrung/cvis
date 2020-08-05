@@ -41,10 +41,7 @@ function bench20()
             EssentialBC('cccc', GDof, xx, yy, nodeCoordinates, numberNodes);
 
     outer = 100;
-    inner = 10;
-    midNode = (numberNodes+1)/2;
-    umax(1:outer,1:inner) = 0;
-    
+    inner = 10;    
     t(1:outer) = 0;
 
     for i = 1:outer
@@ -67,17 +64,6 @@ function bench20()
 
             % solution
             displacements = solution(GDof, prescribedDof, stiffness, force);
-
-            % deformed shape
-            % figure
-            % plot3(xx,yy,displacements(1:numberNodes),'.')
-            [~,idx] = max(displacements(1:numberNodes));
-            umax(i,j) = displacements(midNode);
-            if idx ~= midNode
-                fprintf('outer: %d, inner: %d, idx ~= midNode\n',i,j);
-            else
-                fprintf('outer: %d, inner: %d\n',i,j);
-            end
         end
         t(i) = toc;
     end
