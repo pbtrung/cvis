@@ -40,7 +40,7 @@ function bench20()
     [prescribedDof, ~] = ...
             EssentialBC('cccc', GDof, xx, yy, nodeCoordinates, numberNodes);
 
-    outer = 10;
+    outer = 100;
     inner = 10;
     t(1:outer) = 0;
 
