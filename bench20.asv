@@ -63,10 +63,10 @@ function bench20()
                 elementNodes, nodeCoordinates,P,elemNum);
 
             % solution
-            solution(GDof, prescribedDof, stiffness, force);
+            displacements = solution(GDof, prescribedDof, stiffness, force);
         end
         t(i) = toc;
-        fprintf('t(%d) = %10.10f\n',i,t(i));
+        fprintf('t(%d) = \n',i);
     end
     
     mean(t)
