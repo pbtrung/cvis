@@ -56,9 +56,9 @@ function cvis_ce_acv()
     ns_Q0_cv = 165;
     ns_Q1_cv = 165;
     
-    ns_Q0_acv1 = 130;
-    ns_Q1_acv1 = 130;
-    ns_mu_acv1 = 200;
+    ns_Q0_acv1 = 112;
+    ns_Q1_acv1 = 112;
+    ns_mu_acv1 = 300;
     
     ns_Q0_acv2 = 147;
     ns_Q1_acv2 = 147;
