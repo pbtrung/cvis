@@ -3,10 +3,10 @@ function cvis_ce_acv()
     format long;
     rng('default');
 
-    nelx = 30;
-    nely = 30;
-    nelx1 = 20;
-    nely1 = 20;
+    nelx = 20;
+    nely = 20;
+    nelx1 = 10;
+    nely1 = 10;
     if nelx ~= nely || mod(nelx,2) ~= 0 || nelx1 ~= nely1 || mod(nelx1,2) ~= 0
         error("Check inputs")
     end
