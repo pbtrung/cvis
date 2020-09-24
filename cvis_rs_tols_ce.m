@@ -1,4 +1,4 @@
-function cvis_rs_tols(path)
+function cvis_rs_tols_ce(path)
     
     dfile = append(path,'results.txt');
     if exist(dfile, 'file')
@@ -29,10 +29,19 @@ function cvis_rs_tols(path)
     wQ0s(1:ansamples) = 0;
     wQ1s(1:ansamples) = 0;
     
+    % definition of the random variables
+    d      = 1;
+    pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
+    
+    % CE method
+    N      = 5000;    % total number of samples for each level
+    p      = 0.1;     % quantile value to select samples for parameter update
+    k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
     nsamples = 10000;
+    
     umin = 0;
     umax = 7;
-    
+        
     tol = [0 0.1 0.2 0.4 0.6 0.8 1 1.2];
     min_ve_v0(1:length(tol)) = 0;
     astar(1:length(tol)) = 0;
@@ -43,20 +52,16 @@ function cvis_rs_tols(path)
     for r = 1:length(tol)
         
         fprintf('tol: %f\n',tol(r));
-        prob2 = 1-normcdf(l1-tol(r));
+                
+        % limit state function
         Q2 = @(x) l1-tol(r)-x;
-        q2 = @(x) ((Q2(x)<0).*normpdf(x))/prob2;
+        g = @(x) Q2(x);
+        [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
+        gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
+        q2 = @(x) pdf(gm,x);
 
         for j = 1:ansamples
-            % rejection sampling
-            u = umin+(umax-umin)*rand(nsamples,1);
-            sample_value = q2(u);
-            max_value = max(sample_value);
-            accepted = rand(nsamples,1)<(sample_value/max_value);
-            samples = u(accepted,:);
-            if length(samples) < 200
-                error('length(samples) < 200');
-            end
+            samples = random(gm,nsamples);
 
             Q0s = Q0(samples(:))<0;
             Q1s = Q1(samples(:))<0;
@@ -107,7 +112,7 @@ function cvis_rs_tols(path)
     
     figs(1) = figure('Units','inches',...
         'Position',[0 0 width height],...
-        'visible','off',...
+        'visible','on',...
         'PaperPositionMode','auto');
     hold on
     plot(l1-tol,min_ve_v0,'-s',l1-tol,kldiv,'-d')
