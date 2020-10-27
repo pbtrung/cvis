@@ -1,5 +1,8 @@
 function cvis_rs_tols(path)
 
+    format long;
+    rng('default');
+
     mu = 0;
     std = 1;
     w0 = 3;
