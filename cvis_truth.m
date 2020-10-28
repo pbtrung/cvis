@@ -29,7 +29,9 @@ function cvis_truth(path)
         PZ = dot(P',repmat(LZ,1,nelx0*nely0));
         X = reshape(PZ,nelx0,nely0)';
         E = lower + (upper-lower)*normcdf(X);
+        tic
         U = FE(lx,ly,nelx0,nely0,dof0,force,E,0);
+        toc
         Uy(i) = U(dof0);
     end
     
