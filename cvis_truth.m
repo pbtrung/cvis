@@ -31,8 +31,9 @@ function cvis_truth(path)
         E = lower + (upper-lower)*normcdf(X);
         tic
         U = FE(lx,ly,nelx0,nely0,dof0,force,E,0);
-        toc
+        t = toc;
         Uy(i) = U(dof0);
+        fprintf('iter: %d, time: %f\n',i,t);
     end
     
     writematrix(Uy,append(path,'Uy.txt'));
