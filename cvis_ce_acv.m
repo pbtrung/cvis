@@ -224,4 +224,5 @@ function cvis_ce_acv(path)
         % print each figure in figs to a separate .eps file
         print(figs(k), '-depsc2', sprintf('%s', append(path,fn(k))))
     end
+    
 end
