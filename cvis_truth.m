@@ -10,13 +10,13 @@ function cvis_truth()
     
     Q0 = @(x) l0-x;
     
-    ns = 10000000;
+    ns = 10^8;
     samples = randn(ns,1);
     model = Q0(samples(:))<0;
     m = mean(model);
     v = var(model);
     disp(1-normcdf(l0));
     disp(m);
-    disp(v);
+    disp(v/ns);
         
 end
