@@ -50,11 +50,17 @@ function cvis_ce_rf_acv()
     mu = zeros(1,neig);
     stdd = eye(neig);
     
+    [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
+    repath = fullfile(filepath,'results');
+    
     n_MC = 10^5;
-    s_MC = random(gm, n_MC);
-    Q0s_MC = Q0(s_MC')<0;
-    w_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
-    wQ0s_MC = w_MC.*Q0s_MC;
+    s_Q0_MC = readmatrix(fullfile(repath,'s_MC.txt'));
+    Q0s_MC = readmatrix(fullfile(repath,'Q0s_MC.txt'));
+    wQ0s_MC = readmatrix(fullfile(repath,'wQ0s_MC.txt'));
+    
+    s_Q1_MC = readmatrix(fullfile(repath,'s_mu_IS.txt'));
+    Q1s_MC = readmatrix(fullfile(repath,'mu1_IS.txt'));
+    wQ1s_MC = readmatrix(fullfile(repath,'wmu_IS.txt'));
     
     % c0 = c*c1
     c = 11;
@@ -63,9 +69,7 @@ function cvis_ce_rf_acv()
     n0_CV = fix(n_MC*c/(c+1));
     n1_CV = n0_CV;
     
-    Q0s_CV = Q0s_MC(1:n0_CV);
-    w0_CV = w_MC(1:n0_CV);
-    wQ0s_CV = w0_CV.*Q0s_CV;
+    wQ0s_CV = wQ0s_MC(1:n0_CV);
     Q1s_CV = Q1(s_MC(1:n1_CV,:)')<0;
     w1_CV = w_MC(1:n1_CV);
     wQ1s_CV = w1_CV.*Q1s_CV;

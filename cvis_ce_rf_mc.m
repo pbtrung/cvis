@@ -58,21 +58,28 @@ function cvis_ce_rf_mc()
     writematrix(s_MC, fullfile(repath,'s_MC.txt'));
     Q0s_MC = Q0(s_MC')<0;
     writematrix(Q0s_MC, fullfile(repath,'Q0s_MC.txt'));
-    w_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
-    writematrix(w_MC, fullfile(repath,'w_MC.txt'));
-    wQ0s_MC = w_MC.*Q0s_MC;
+    w0_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
+    writematrix(w0_MC, fullfile(repath,'w0_MC.txt'));
+    wQ0s_MC = w0_MC.*Q0s_MC;
     writematrix(wQ0s_MC, fullfile(repath,'wQ0s_MC.txt'));
+    Q1s_MC = Q1(s_MC')<0;
+    writematrix(Q1s_MC, fullfile(repath,'Q1s_MC.txt'));
+    w1_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
+    writematrix(w1_MC, fullfile(repath,'w1_MC.txt'));
+    wQ1s_MC = w1_MC.*Q1s_MC;
+    writematrix(wQ1s_MC, fullfile(repath,'wQ1s_MC.txt'));
     
     disp(mean(wQ0s_MC));
+    disp(mean(wQ1s_MC));
     
     m1_IS = 10^6;
-    s_mu_IS = random(gm, m1_IS);
-    writematrix(s_mu_IS, fullfile(repath,'s_mu_IS.txt'));
-    mu1_IS = Q1(s_mu_IS')<0;
-    writematrix(mu1_IS, fullfile(repath,'mu1_IS.txt'));
-    w1_mu_IS = mvnpdf(s_mu_IS,mu,stdd)./qce(s_mu_IS);
-    writematrix(w1_mu_IS, fullfile(repath,'w1_mu_IS.txt'));
-    wmu_IS = w1_mu_IS.*mu1_IS;
-    writematrix(wmu_IS, fullfile(repath,'wmu_IS.txt'));
+    s_IS = random(gm, m1_IS);
+    writematrix(s_IS, fullfile(repath,'s_IS.txt'));
+    Q1s_IS = Q1(s_IS')<0;
+    writematrix(Q1s_IS, fullfile(repath,'Q1s_IS.txt'));
+    w1_IS = mvnpdf(s_IS,mu,stdd)./qce(s_IS);
+    writematrix(w1_IS, fullfile(repath,'w1_IS.txt'));
+    wQ1s_IS = w1_IS.*Q1s_IS;
+    writematrix(wQ1s_IS, fullfile(repath,'wQ1s_IS.txt'));
     
 end
