@@ -1,4 +1,4 @@
-function cvis_ce_rf_mc(path)
+function cvis_ce_rf_mc()
     
     format long;
     rng('default');
@@ -50,26 +50,29 @@ function cvis_ce_rf_mc(path)
     mu = zeros(1,neig);
     stdd = eye(neig);
     
+    [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
+    repath = fullfile(filepath,'results');
+    
     n_MC = 10^5;
     s_MC = random(gm, n_MC);
-    writematrix(s_MC, append(path,'s_MC.txt'));
+    writematrix(s_MC, fullfile(repath,'s_MC.txt'));
     Q0s_MC = Q0(s_MC')<0;
-    writematrix(Q0s_MC, append(path,'Q0s_MC.txt'));
+    writematrix(Q0s_MC, fullfile(repath,'Q0s_MC.txt'));
     w_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
-    writematrix(w_MC, append(path,'w_MC.txt'));
+    writematrix(w_MC, fullfile(repath,'w_MC.txt'));
     wQ0s_MC = w_MC.*Q0s_MC;
-    writematrix(wQ0s_MC, append(path,'wQ0s_MC.txt'));
+    writematrix(wQ0s_MC, fullfile(repath,'wQ0s_MC.txt'));
     
     disp(mean(wQ0s_MC));
     
     m1_IS = 10^6;
     s_mu_IS = random(gm, m1_IS);
-    writematrix(s_mu_IS, append(path,'s_mu_IS.txt'));
+    writematrix(s_mu_IS, fullfile(repath,'s_mu_IS.txt'));
     mu1_IS = Q1(s_mu_IS')<0;
-    writematrix(mu1_IS, append(path,'mu1_IS.txt'));
+    writematrix(mu1_IS, fullfile(repath,'mu1_IS.txt'));
     w1_mu_IS = mvnpdf(s_mu_IS,mu,stdd)./qce(s_mu_IS);
-    writematrix(w1_mu_IS, append(path,'w1_mu_IS.txt'));
+    writematrix(w1_mu_IS, fullfile(repath,'w1_mu_IS.txt'));
     wmu_IS = w1_mu_IS.*mu1_IS;
-    writematrix(wmu_IS, append(path,'wmu_IS.txt'));
+    writematrix(wmu_IS, fullfile(repath,'wmu_IS.txt'));
     
 end
