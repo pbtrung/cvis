@@ -52,12 +52,24 @@ function cvis_ce_rf_mc(path)
     
     n_MC = 10^5;
     s_MC = random(gm, n_MC);
+    writematrix(s_MC, append(path,'s_MC.txt'));
     Q0s_MC = Q0(s_MC')<0;
     writematrix(Q0s_MC, append(path,'Q0s_MC.txt'));
     w_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
+    writematrix(w_MC, append(path,'w_MC.txt'));
     wQ0s_MC = w_MC.*Q0s_MC;
     writematrix(wQ0s_MC, append(path,'wQ0s_MC.txt'));
     
     disp(mean(wQ0s_MC));
+    
+    m1_IS = 10^6;
+    s_mu_IS = random(gm, m1_IS);
+    writematrix(s_mu_IS, append(path,'s_mu_IS.txt'));
+    mu1_IS = Q1(s_mu_IS')<0;
+    writematrix(mu1_IS, append(path,'mu1_IS.txt'));
+    w1_mu_IS = mvnpdf(s_mu_IS,mu,stdd)./qce(s_mu_IS);
+    writematrix(w1_mu_IS, append(path,'w1_mu_IS.txt'));
+    wmu_IS = w1_mu_IS.*mu1_IS;
+    writematrix(wmu_IS, append(path,'wmu_IS.txt'));
     
 end
