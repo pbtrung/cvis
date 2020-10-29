@@ -15,7 +15,7 @@ function cvis_truth(path, model)
     upper = 2;
     fl = 2;
     
-    [Psi,lambda,~] = KL(lx,ly,Lx,Ly,nelx0,nely0,fl);
+    [Psi,lambda,PsiE1] = KL(lx,ly,Lx,Ly,nelx0,nely0,fl);
     
     ns = 10^6;
     Uy(1:ns) = 0;
