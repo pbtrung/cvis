@@ -69,9 +69,6 @@ function cvis_ce_rf_mc()
     wQ1s_MC = w1_MC.*Q1s_MC;
     writematrix(wQ1s_MC, fullfile(repath,'wQ1s_MC.txt'));
     
-    disp(mean(wQ0s_MC));
-    disp(mean(wQ1s_MC));
-    
     m1_IS = 2*10^6;
     s_IS = random(gm, m1_IS);
     writematrix(s_IS, fullfile(repath,'s_IS.txt'));
@@ -81,5 +78,9 @@ function cvis_ce_rf_mc()
     writematrix(w1_IS, fullfile(repath,'w1_IS.txt'));
     wQ1s_IS = w1_IS.*Q1s_IS;
     writematrix(wQ1s_IS, fullfile(repath,'wQ1s_IS.txt'));
+    
+    disp(mean(wQ0s_MC));
+    disp(mean(wQ1s_MC));
+    disp(mean(wQ1s_IS));
     
 end
