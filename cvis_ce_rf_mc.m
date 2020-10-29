@@ -1,4 +1,4 @@
-function cvis_ce_rf_acv()
+function cvis_ce_rf_mc(path)
     
     format long;
     rng('default');
@@ -53,59 +53,9 @@ function cvis_ce_rf_acv()
     n_MC = 10^5;
     s_MC = random(gm, n_MC);
     Q0s_MC = Q0(s_MC')<0;
+    writematrix(Q0s_MC, append(path,'Q0s_MC.txt'));
     w_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
     wQ0s_MC = w_MC.*Q0s_MC;
-    
-    % c0 = c*c1
-    c = 11;
-    
-    %%
-    n0_CV = fix(n_MC*c/(c+1));
-    n1_CV = n0_CV;
-    
-    Q0s_CV = Q0s_MC(1:n0_CV);
-    w0_CV = w_MC(1:n0_CV);
-    wQ0s_CV = w0_CV.*Q0s_CV;
-    Q1s_CV = Q1(s_MC(1:n1_CV,:)')<0;
-    w1_CV = w_MC(1:n1_CV);
-    wQ1s_CV = w1_CV.*Q1s_CV;
-    
-    v0_MC = var(wQ0s_MC)/n_MC;
-    cov_Q0Q1_CV = cov(wQ0s_CV,wQ1s_CV);
-    cov_MC_Q0Q1_CV = cov_Q0Q1_CV/n0_CV;
-    v_MC_Q0_CV = cov_MC_Q0Q1_CV(1,1);
-    v_MC_Q1_CV = cov_MC_Q0Q1_CV(2,2);
-    v_CV = v_MC_Q0_CV + a.^2*v_MC_Q1_CV + 2*a*cov_MC_Q0Q1_CV(1,2);
-    
-    %%
-    r = 2.5;
-    n0_IS = fix(n_MC*c/(c+r+1));
-    n1_IS = n0_IS;
-    m1_IS = fix(r*n0_IS);
-    r1 = (n1_IS+m1_IS)/n0_IS;
-    
-    Q0s_IS = Q0s_MC(1:n0_IS);
-    w0_IS = w_MC(1:n0_IS);
-    wQ0s_IS = w0_IS.*Q0s_IS;
-    Q1s_IS = Q1(s_MC(1:n1_IS))<0;
-    w1_IS = w_MC(1:n1_IS);
-    wQ1s_IS = w1_IS.*Q1s_IS;
-    
-    s_mu_IS = random(gm, m1_IS);
-    mu1_IS = Q1(s_mu_IS')<0;
-    w1_mu_IS = mvnpdf(s_mu_IS,mu,stdd)./qce(s_mu_IS);
-    wmu_IS = w1_mu_IS.*mu1_IS;
-    
-    %%
-    cov_Q0Q1_IS = cov(wQ0s_IS,wQ1s_IS);
-    cov_MC_Q0Q1_IS = cov_Q0Q1_IS/n0_IS;
-    v_MC_Q0_IS = cov_MC_Q0Q1_IS(1,1);
-    v_MC_Q1_IS = cov_MC_Q0Q1_IS(2,2);
-    v_IS = v_MC_Q0_IS + a.^2*(v_MC_Q1_IS*((r1-1)/r1)) + 2*a*(cov_MC_Q0Q1_IS(1,2)*((r1-1)/r1));
-    
-    m0s_IS = mean(wQ0s_IS);
-    m1s_IS = mean(wQ1s_IS);
-    mu1s_IS = (sum(wQ1s_IS) + sum(wmu_IS))/(n1_IS + m1_IS);
-    m_IS = m0s_IS + a*(m1s_IS-mu1s_IS);
+    writematrix(wQ0s_MC, append(path,'wQ0s_MC.txt'));
     
 end
