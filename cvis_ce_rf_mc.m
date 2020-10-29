@@ -53,7 +53,7 @@ function cvis_ce_rf_mc()
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
     repath = fullfile(filepath,'results');
     
-    n_MC = 10^5;
+    n_MC = 5*10^5;
     s_MC = random(gm, n_MC);
     writematrix(s_MC, fullfile(repath,'s_MC.txt'));
     Q0s_MC = Q0(s_MC')<0;
@@ -72,7 +72,7 @@ function cvis_ce_rf_mc()
     disp(mean(wQ0s_MC));
     disp(mean(wQ1s_MC));
     
-    m1_IS = 10^6;
+    m1_IS = 2*10^6;
     s_IS = random(gm, m1_IS);
     writematrix(s_IS, fullfile(repath,'s_IS.txt'));
     Q1s_IS = Q1(s_IS')<0;
