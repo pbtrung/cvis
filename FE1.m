@@ -10,6 +10,7 @@ function Udof = FE1(lx,ly,nelx,nely,dof,force,x,PsiE1,L,lower,upper)
     freedofs  = setdiff(alldofs,fixeddofs);
     % SOLVING
     parfor j = 1:nx
+        tic
         F = sparse(2*(nely+1)*(nelx+1),1);
         F(dof,1) = force;
         K = sparse(2*(nelx+1)*(nely+1),2*(nelx+1)*(nely+1));
@@ -28,6 +29,8 @@ function Udof = FE1(lx,ly,nelx,nely,dof,force,x,PsiE1,L,lower,upper)
         U(freedofs,:) = K(freedofs,freedofs) \ F(freedofs,:);
         U(fixeddofs,:)= 0;
         Udof(j) = U(dof);
+        t = toc;
+        fprintf('iter: %d, time: %f\n',j,t);
     end
     
 end

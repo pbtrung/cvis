@@ -11,6 +11,7 @@ function Udof = FE0(lx,ly,nelx,nely,dof,force,x,P,L,lower,upper)
     freedofs  = setdiff(alldofs,fixeddofs);
         
     parfor j = 1:nx
+        tic
         LZ = L*x(:,j);
         PZ = dot(P',repmat(LZ,1,nelx*nely));
         X = reshape(PZ,nelx,nely)';
@@ -33,6 +34,8 @@ function Udof = FE0(lx,ly,nelx,nely,dof,force,x,P,L,lower,upper)
         U(freedofs,:) = K(freedofs,freedofs) \ F(freedofs,:);
         U(fixeddofs,:)= 0;
         Udof(j) = U(dof);
+        t = toc;
+        fprintf('iter: %d, time: %f\n',j,t);
     end
     
 end

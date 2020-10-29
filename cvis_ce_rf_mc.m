@@ -58,4 +58,6 @@ function cvis_ce_rf_mc(path)
     wQ0s_MC = w_MC.*Q0s_MC;
     writematrix(wQ0s_MC, append(path,'wQ0s_MC.txt'));
     
+    disp(mean(wQ0s_MC));
+    
 end
