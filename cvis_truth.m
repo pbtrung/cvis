@@ -34,7 +34,7 @@ function cvis_truth(path, model)
             X = reshape(PZ,nelx0,nely0)';
             E = lower + (upper-lower)*normcdf(X);
             tic
-            U = FE(lx,ly,nelx0,nely0,dof0,force,E,0);
+            U = FE(lx,ly,nelx0,nely0,dof0,force,E,model);
             t = toc;
             Uy(i) = U(dof0);
             fprintf('iter: %d, time: %f\n',i,t);
@@ -45,7 +45,7 @@ function cvis_truth(path, model)
             X = PsiE1*(L*Z(:,i));
             E1 = lower + (upper-lower)*normcdf(X);
             tic
-            U = FE(lx,ly,nelx1,nely1,dof1,force,E1,1);
+            U = FE(lx,ly,nelx1,nely1,dof1,force,E1,model);
             t = toc;
             Uy(i) = U(dof1);
             fprintf('iter: %d, time: %f\n',i,t);
