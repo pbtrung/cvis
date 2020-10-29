@@ -47,7 +47,7 @@ function cvis_truth(path, model)
             tic
             U = FE(lx,ly,nelx1,nely1,dof1,force,E1,1);
             t = toc;
-            Uy(i) = U(dof0);
+            Uy(i) = U(dof1);
             fprintf('iter: %d, time: %f\n',i,t);
         end
         writematrix(Uy,append(path,'Uy1.txt'));
