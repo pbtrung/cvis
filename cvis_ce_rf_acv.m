@@ -2,65 +2,19 @@ function cvis_ce_rf_acv()
     
     format long;
     rng('default');
-    
-    lx = 0.6;
-    ly = 0.2;
-    nelx0 = 60;
-    nely0 = 20;
-    nelx1 = 30;
-    nely1 = 10;
-    Lx = 60;
-    Ly = 20;
-    lower = 1;
-    upper = 2;
-    
-    [Psi,lambda,PsiE1] = KL(lx,ly,Lx,Ly,nelx0,nely0,2);
-
-    neig = length(lambda);
-    L = diag(sqrt(lambda(1:neig)));
-    P = reshape(permute(Psi,[2 1 3]),nelx0*nely0,neig);
-    
-    l0 = 118.923;
-    l1 = 108.510;
-    
-    dof0 = 2*(nely0+1)*nelx0+2;
-    dof1 = 2*(nely1+1)*nelx1+2;
-    force = 1;
-    
-    Q0 = @(x) l0-FE0(lx,ly,nelx0,nely0,dof0,force,x,P,L,lower,upper);
-    Q1 = @(x) l1-FE1(lx,ly,nelx1,nely1,dof1,force,x,PsiE1,L,lower,upper);
-        
+                
     a = linspace(-1.5,0.5,33);
-    
-    % definition of the random variables
-    d      = neig;
-    pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
-    
-    % CE method
-    N      = 5000;    % total number of samples for each level
-    p      = 0.1;     % quantile value to select samples for parameter update
-    k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
-    
-    % limit state function
-    g = @(x) Q1(x);
-    [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
-    gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
-    qce = @(x) pdf(gm,x);
-    
-    mu = zeros(1,neig);
-    stdd = eye(neig);
     
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
     repath = fullfile(filepath,'results');
     
     n_MC = 10^5;
-    s_Q0_MC = readmatrix(fullfile(repath,'s_MC.txt'));
-    Q0s_MC = readmatrix(fullfile(repath,'Q0s_MC.txt'));
+    s_MC = readmatrix(fullfile(repath,'s_MC.txt'));
+    if n_MC ~= length(s_MC)
+        error('n_MC ~= length(s_MC)')
+    end
     wQ0s_MC = readmatrix(fullfile(repath,'wQ0s_MC.txt'));
-    
-    s_Q1_MC = readmatrix(fullfile(repath,'s_mu_IS.txt'));
-    Q1s_MC = readmatrix(fullfile(repath,'mu1_IS.txt'));
-    wQ1s_MC = readmatrix(fullfile(repath,'wmu_IS.txt'));
+    wQ1s_MC = readmatrix(fullfile(repath,'wQ1s_MC.txt'));
     
     % c0 = c*c1
     c = 11;
@@ -70,9 +24,7 @@ function cvis_ce_rf_acv()
     n1_CV = n0_CV;
     
     wQ0s_CV = wQ0s_MC(1:n0_CV);
-    Q1s_CV = Q1(s_MC(1:n1_CV,:)')<0;
-    w1_CV = w_MC(1:n1_CV);
-    wQ1s_CV = w1_CV.*Q1s_CV;
+    wQ1s_CV = wQ1s_MC(1:n1_CV);
     
     v0_MC = var(wQ0s_MC)/n_MC;
     cov_Q0Q1_CV = cov(wQ0s_CV,wQ1s_CV);
@@ -88,17 +40,11 @@ function cvis_ce_rf_acv()
     m1_IS = fix(r*n0_IS);
     r1 = (n1_IS+m1_IS)/n0_IS;
     
-    Q0s_IS = Q0s_MC(1:n0_IS);
-    w0_IS = w_MC(1:n0_IS);
-    wQ0s_IS = w0_IS.*Q0s_IS;
-    Q1s_IS = Q1(s_MC(1:n1_IS))<0;
-    w1_IS = w_MC(1:n1_IS);
-    wQ1s_IS = w1_IS.*Q1s_IS;
+    wQ0s_IS = wQ0s_MC(1:n0_IS);
+    wQ1s_IS = wQ1s_MC(1:n1_IS);
     
-    s_mu_IS = random(gm, m1_IS);
-    mu1_IS = Q1(s_mu_IS')<0;
-    w1_mu_IS = mvnpdf(s_mu_IS,mu,stdd)./qce(s_mu_IS);
-    wmu_IS = w1_mu_IS.*mu1_IS;
+    wQ1s_IS_file = readmatrix(fullfile(repath,'wQ1s_IS.txt'));
+    wmu_IS = wQ1s_IS_file(1:m1_IS);
     
     %%
     cov_Q0Q1_IS = cov(wQ0s_IS,wQ1s_IS);
@@ -111,5 +57,62 @@ function cvis_ce_rf_acv()
     m1s_IS = mean(wQ1s_IS);
     mu1s_IS = (sum(wQ1s_IS) + sum(wmu_IS))/(n1_IS + m1_IS);
     m_IS = m0s_IS + a*(m1s_IS-mu1s_IS);
+    
+    % from cal_mean
+    prob0 = 0.001173;
+    disp('prob0/m_IS');
+    disp(abs(prob0-m_IS')/prob0*100);
+    
+    disp(min(v_CV'/v0_MC));
+    disp(min(v_IS'/v0_MC));
+    % from cal_mean
+    v_naive = 1.171625242625240e-09;
+    disp(v_naive/v0_MC);
+    disp(max(v_naive./v_CV'));
+    disp(max(v_naive./v_IS'));
+    
+    %%
+    set(0,'defaultLineLineWidth',0.7);
+    set(0,'defaultLineMarkerSize',2);
+    fontsize = 8;
+    width = 2.5;
+    height = 2.5;
+    
+    figs(1) = figure('Units','inches',...
+        'Position',[0 0 width height],...
+        'visible','on',...
+        'PaperPositionMode','auto');
+    hold on
+    plot(a,v_CV'/v0_MC,'-d',a,v_IS'/v0_MC,'-v',a,ones(1,length(a)),'-o')
+    set(gca,...
+        'Units','normalized',...
+        'FontUnits','points',...
+        'FontWeight','normal',...
+        'FontSize',fontsize,...
+        'FontName','Times','Box','on')
+    legend({'$v_{CV}$','$v_{IS}$','$v_0$'},...
+        'interpreter','latex',...
+        'FontSize',fontsize,...
+        'FontName','Times',...
+        'Location','Best')
+    ylim([0.45 2.75]);
+    ylabel('Variance ratio',...
+        'FontUnits','points',...
+        'interpreter','latex',...
+        'FontSize',fontsize,...
+        'FontName','Times')
+    xlabel({'$\alpha$'},...
+        'FontUnits','points',...
+        'interpreter','latex',...
+        'FontWeight','normal',...
+        'FontSize',fontsize,...
+        'FontName','Times')
+    fn(1) = "v_ACV__v0_MC.eps";
+    hold off
+    
+    for k = 1:length(figs)
+        % print each figure in figs to a separate .eps file
+        print(figs(k), '-depsc2', fullfile(repath,fn(k)))
+    end
     
 end
