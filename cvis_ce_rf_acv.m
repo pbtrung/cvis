@@ -8,11 +8,7 @@ function cvis_ce_rf_acv()
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
     repath = fullfile(filepath,'results');
     
-    n_MC = 10^5;
-    s_MC = readmatrix(fullfile(repath,'s_MC.txt'));
-    if n_MC ~= length(s_MC)
-        error('n_MC ~= length(s_MC)')
-    end
+    n_MC = 5*10^5;
     wQ0s_MC = readmatrix(fullfile(repath,'wQ0s_MC.txt'));
     wQ1s_MC = readmatrix(fullfile(repath,'wQ1s_MC.txt'));
     
@@ -34,7 +30,7 @@ function cvis_ce_rf_acv()
     v_CV = v_MC_Q0_CV + a.^2*v_MC_Q1_CV + 2*a*cov_MC_Q0Q1_CV(1,2);
     
     %%
-    r = 2.5;
+    r = 2;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
@@ -42,10 +38,7 @@ function cvis_ce_rf_acv()
     
     wQ0s_IS = wQ0s_MC(1:n0_IS);
     wQ1s_IS = wQ1s_MC(1:n1_IS);
-    
-    wQ1s_IS_file = readmatrix(fullfile(repath,'wQ1s_IS.txt'));
-    wmu_IS = wQ1s_IS_file(1:m1_IS);
-    
+        
     %%
     cov_Q0Q1_IS = cov(wQ0s_IS,wQ1s_IS);
     cov_MC_Q0Q1_IS = cov_Q0Q1_IS/n0_IS;
@@ -53,23 +46,8 @@ function cvis_ce_rf_acv()
     v_MC_Q1_IS = cov_MC_Q0Q1_IS(2,2);
     v_IS = v_MC_Q0_IS + a.^2*(v_MC_Q1_IS*((r1-1)/r1)) + 2*a*(cov_MC_Q0Q1_IS(1,2)*((r1-1)/r1));
     
-    m0s_IS = mean(wQ0s_IS);
-    m1s_IS = mean(wQ1s_IS);
-    mu1s_IS = (sum(wQ1s_IS) + sum(wmu_IS))/(n1_IS + m1_IS);
-    m_IS = m0s_IS + a*(m1s_IS-mu1s_IS);
-    
-    % from cal_mean
-    prob0 = 0.001173;
-    disp('prob0/m_IS');
-    disp(abs(prob0-m_IS')/prob0*100);
-    
     disp(min(v_CV'/v0_MC));
     disp(min(v_IS'/v0_MC));
-    % from cal_mean
-    v_naive = 1.171625242625240e-09;
-    disp(v_naive/v0_MC);
-    disp(max(v_naive./v_CV'));
-    disp(max(v_naive./v_IS'));
     
     %%
     set(0,'defaultLineLineWidth',0.7);
