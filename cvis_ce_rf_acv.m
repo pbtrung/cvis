@@ -8,7 +8,7 @@ function cvis_ce_rf_acv()
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
     repath = fullfile(filepath,'results');
     
-    n_MC = 5*10^5;
+    n_MC = 4*10^5;
     wQ0s_MC = readmatrix(fullfile(repath,'wQ0s_MC.txt'));
     wQ1s_MC = readmatrix(fullfile(repath,'wQ1s_MC.txt'));
     
@@ -22,7 +22,7 @@ function cvis_ce_rf_acv()
     wQ0s_CV = wQ0s_MC(1:n0_CV);
     wQ1s_CV = wQ1s_MC(1:n1_CV);
     
-    v0_MC = var(wQ0s_MC)/n_MC;
+    v0_MC = var(wQ0s_MC(1:n_MC))/n_MC;
     cov_Q0Q1_CV = cov(wQ0s_CV,wQ1s_CV);
     cov_MC_Q0Q1_CV = cov_Q0Q1_CV/n0_CV;
     v_MC_Q0_CV = cov_MC_Q0Q1_CV(1,1);
@@ -30,7 +30,7 @@ function cvis_ce_rf_acv()
     v_CV = v_MC_Q0_CV + a.^2*v_MC_Q1_CV + 2*a*cov_MC_Q0Q1_CV(1,2);
     
     %%
-    r = 2;
+    r = 3;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
@@ -73,7 +73,7 @@ function cvis_ce_rf_acv()
         'FontSize',fontsize,...
         'FontName','Times',...
         'Location','Best')
-    ylim([0.45 2.75]);
+    ylim([0.35 2.75]);
     ylabel('Variance ratio',...
         'FontUnits','points',...
         'interpreter','latex',...
