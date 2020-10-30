@@ -46,26 +46,25 @@ function cvis_truth(model)
     nsamples = 10^6;
     randP = rand(nsamples,4);
     randh = rand(nsamples,4);
+    P = Pmin+(Pmax-Pmin)*randP;
+    h = (hmin+(hmax-hmin)*randh)/20;
     t(1:nsamples) = 0;
     midNode = (numberNodes+1)/2;
     umax(1:nsamples) = 0;
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
     repath = fullfile(filepath,'results');
     
-    parfor i = 1:2
-        P = Pmin+(Pmax-Pmin)*randP(i,:);
-        h = (hmin+(hmax-hmin)*randh(i,:))/20;
-        
+    parfor i = 1:2        
         tic
         % computation of the system stiffness matrix and force vector
         stiffness = ...
             formStiffnessMatrixMindlin_R(GDof,...
             elementNodes,numberNodes,nodeCoordinates,...
-            'Q4','complete','reduced',E,poisson,kapa,h,elemNum);
+            'Q4','complete','reduced',E,poisson,kapa,h(i,:),elemNum);
 
         force = ...
             formForceVectorMindlin_R(GDof,...
-            elementNodes,nodeCoordinates,P,'Q4','reduced',elemNum);
+            elementNodes,nodeCoordinates,P(i,:),'Q4','reduced',elemNum);
 
         % solution
         displacements = solution(GDof,prescribedDof,stiffness,force);
