@@ -9,7 +9,7 @@ function K = ...
     % computation of stiffness matrix for Mindlin plate element
 
     % K : stiffness matrix
-    K = sparse(GDof,GDof);
+    K = zeros(GDof,GDof);
 
     % Gauss quadrature for bending part
     [gaussWeights,gaussLocations] = gaussQuadrature(quadTypeB);
