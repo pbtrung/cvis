@@ -15,7 +15,7 @@ function force = ...
         elem = elemNum(k,:);
         for e = 1:length(elem)
             % indice : nodal connectivities for each element
-            indice = elementNodes(e,:);
+            indice = elementNodes(elem(e),:);
 
             % cycle for Gauss point
             for q = 1:size(gaussWeights,1)

@@ -23,7 +23,7 @@ function K = ...
         for e = 1:length(elem)
             % indice : nodal connectivities for each element
             % elementDof: element degrees of freedom
-            indice = elementNodes(e,:);
+            indice = elementNodes(elem(e),:);
             elementDof = [indice indice+numberNodes indice+2*numberNodes];
             ndof = length(indice);
 
@@ -69,7 +69,7 @@ function K = ...
         for e = 1:length(elem)
             % indice : nodal connectivities for each element
             % elementDof: element degrees of freedom
-            indice = elementNodes(e,:);
+            indice = elementNodes(elem(e),:);
             elementDof = [indice indice+numberNodes indice+2*numberNodes];
             ndof = length(indice);
 

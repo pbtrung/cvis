@@ -9,7 +9,7 @@
 clear; close all
 
 % materials
-E = 10920; poisson = 0.30; kapa = 5/6; thickness = 0.1; 
+E = 10000; poisson = 0.30; kapa = 5/6; thickness = 0.1; 
 I = thickness^3/12;
 
 % constitutive matrix
@@ -24,8 +24,8 @@ P = -1;
 
 % mesh generation
 L = 1;
-numberElementsX = 10;
-numberElementsY = 10;
+numberElementsX = 30;
+numberElementsY = 30;
 numberElements = numberElementsX*numberElementsY;
 %
 [nodeCoordinates, elementNodes] = ...
@@ -63,6 +63,7 @@ fprintf('%3d %12.8f\n',f)
 
 format long
 D1 = E*thickness^3/12/(1-poisson^2);
+disp(min(displacements(1:numberNodes)));
 disp(min(displacements(1:numberNodes))*D1/L^4);
 
 % post-computation

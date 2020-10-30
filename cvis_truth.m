@@ -68,14 +68,15 @@ function cvis_truth(model)
 
         % solution
         displacements = solution(GDof,prescribedDof,stiffness,force);
-
+        
         [~,idx] = max(displacements(1:numberNodes));
         umax(i) = displacements(midNode);
-        if idx ~= midNode
-            error('idx ~= midNode')
-        end
         t = toc;
-        fprintf('iter: %d, time: %f\n',i,t);
+        if idx ~= midNode
+            fprintf('iter: %d, time: %f, idx ~= midNode\n',i,t);
+        else
+            fprintf('iter: %d, time: %f, idx = midNode\n',i,t);
+        end
     end
     
     if model == 0
