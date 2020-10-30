@@ -4,22 +4,10 @@ function cvis_truth(model)
     rng('default');
 
     % materials
-    E = 10920; 
+    E = 10000; 
     poisson = 0.30; 
     kapa = 5/6; 
-    thickness = 10^-4; 
-    I = thickness^3/12;
-
-    % constitutive matrix
-    % bending part
-    C_bending = I*E/(1-poisson^2)* ...
-        [1 poisson 0;poisson 1 0;0 0 (1-poisson)/2];
-    % shear part
-    C_shear = kapa*thickness*E/2/(1+poisson)*eye(2);
-
-    % load
-    P = -1;
-
+    
     % mesh generation
     L = 1;
     if model == 0
@@ -28,9 +16,6 @@ function cvis_truth(model)
     elseif model == 1
         numberElementsX = 10;
         numberElementsY = 10;
-    end
-    if numberElementsX ~= numberElementsY || mod(numberElementsX,2) ~= 0
-        error("Check numberElementsX and numberElementsY")
     end
     numberElements = numberElementsX*numberElementsY;
     %
@@ -63,20 +48,23 @@ function cvis_truth(model)
     randh = rand(nsamples,4);
     midNode = (numberNodes+1)/2;
     umax(1:nsamples) = 0;
-
+    [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
+    repath = fullfile(filepath,'results');
+    
     parfor i = 1:nsamples
+        tic
         P = Pmin+(Pmax-Pmin)*randP(i,:);
         h = (hmin+(hmax-hmin)*randh(i,:))/20;
-
+        
         % computation of the system stiffness matrix and force vector
         [stiffness] = ...
-            formStiffnessMatrixMindlin(GDof,numberElements, ...
-            elementNodes,numberNodes,nodeCoordinates,C_shear, ...
-            C_bending,'Q4','complete','reduced');
+            formStiffnessMatrixMindlin_R(GDof, ...
+            elementNodes,numberNodes,nodeCoordinates,...
+            'Q4','complete','reduced',E,poisson,kapa,h,elemNum);
 
         [force] = ...
-            formForceVectorMindlin(GDof,numberElements, ...
-            elementNodes,numberNodes,nodeCoordinates,P,'Q4','reduced');
+            formForceVectorMindlin_R(GDof, ...
+            elementNodes,numberNodes,nodeCoordinates,P,'Q4','reduced',elemNum);
 
         % solution
         displacements = solution(GDof,prescribedDof,stiffness,force);
@@ -86,11 +74,32 @@ function cvis_truth(model)
         if idx ~= midNode
             error('idx ~= midNode')
         end
+        t = toc;
+        fprintf('iter: %d, time: %f\n',i,t);
     end
     
-    [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
-    repath = fullfile(filepath,'results');
+    if model == 0
+        writematrix(umax,fullfile(repath,'umax_30x30_midNode.txt'));
+    elseif model == 1
+        writematrix(umax,fullfile(repath,'umax_10x10_midNode.txt'));
+    end
     
-    writematrix(umax,fullfile(repath,'umax0.txt'));
+    m = max(umax(:));
+    l = 0.05:0.05:1;
+    lm(1:length(l)) = 0;
+    Umean(1:length(l)) = 0;
+
+    for j = 1:length(l)
+        lm(j) = l(j)*m;
+        Umean(j) = mean(lm(j)-umax<0);
+    end
+
+    if model == 0
+        writematrix(lm',fullfile(repath,'plate_lm_30x30_midNode.txt'));
+        writematrix(Umean',fullfile(repath,'plate_Umean_30x30_midNode.txt'));
+    elseif model == 1
+        writematrix(lm',fullfile(repath,'plate_lm_10x10_midNode.txt'));
+        writematrix(Umean',fullfile(repath,'plate_Umean_10x10_midNode.txt'));
+    end
 
 end

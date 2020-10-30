@@ -24,18 +24,14 @@ P = -1;
 
 % mesh generation
 L = 1;
-numberElementsX = 20;
-numberElementsY = 20;
+numberElementsX = 10;
+numberElementsY = 10;
 numberElements = numberElementsX*numberElementsY;
 %
 [nodeCoordinates, elementNodes] = ...
     rectangularMesh(L,L,numberElementsX,numberElementsY,'Q4');
 xx = nodeCoordinates(:,1);
 yy = nodeCoordinates(:,2);
-
-figure;
-drawingMesh(nodeCoordinates,elementNodes,'Q4','-');
-axis equal
 
 numberNodes = size(xx,1);
 % GDof: global number of degrees of freedom
@@ -53,7 +49,7 @@ GDof = 3*numberNodes;
 
 % boundary conditions
 [prescribedDof,activeDof] = ...
-    EssentialBC('ssss',GDof,xx,yy,nodeCoordinates,numberNodes);
+    EssentialBC('cccc',GDof,xx,yy,nodeCoordinates,numberNodes);
 
 % solution
 displacements = solution(GDof,prescribedDof,stiffness,force);
@@ -67,18 +63,7 @@ fprintf('%3d %12.8f\n',f)
 
 format long
 D1 = E*thickness^3/12/(1-poisson^2);
-min(displacements(1:numberNodes))*D1/L^4
-
-% surface representation
-figure; hold on
-for k = 1:size(elementNodes,1)
-    patch(nodeCoordinates(elementNodes(k,1:4),1),...
-          nodeCoordinates(elementNodes(k,1:4),2),...
-          displacements(elementNodes(k,1:4)),...
-          displacements(elementNodes(k,1:4)))
-end
-set(gca,'fontsize',18)
-view(45,45)
+disp(min(displacements(1:numberNodes))*D1/L^4);
 
 % post-computation
 [stress,shear] = MindlinStress(GDof,numberElements, ...
