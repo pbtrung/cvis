@@ -5,8 +5,8 @@ function cvis_truth(model)
 
     % materials
     E = 10000; 
-    poisson = 0.30; 
-    kapa = 5/6; 
+    poisson = 0.30;
+    kapa = 5/6;
     
     % mesh generation
     L = 1;
@@ -58,13 +58,13 @@ function cvis_truth(model)
         
         % computation of the system stiffness matrix and force vector
         [stiffness] = ...
-            formStiffnessMatrixMindlin_R(GDof, ...
+            formStiffnessMatrixMindlin_R(GDof,...
             elementNodes,numberNodes,nodeCoordinates,...
             'Q4','complete','reduced',E,poisson,kapa,h,elemNum);
 
         [force] = ...
-            formForceVectorMindlin_R(GDof, ...
-            elementNodes,numberNodes,nodeCoordinates,P,'Q4','reduced',elemNum);
+            formForceVectorMindlin_R(GDof,...
+            elementNodes,nodeCoordinates,P,'Q4','reduced',elemNum);
 
         % solution
         displacements = solution(GDof,prescribedDof,stiffness,force);
