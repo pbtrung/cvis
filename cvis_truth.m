@@ -46,6 +46,7 @@ function cvis_truth(model)
     nsamples = 10^6;
     randP = rand(nsamples,4);
     randh = rand(nsamples,4);
+    t(1:nsamples) = 0;
     midNode = (numberNodes+1)/2;
     umax(1:nsamples) = 0;
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
@@ -56,6 +57,7 @@ function cvis_truth(model)
         P = Pmin+(Pmax-Pmin)*randP(i,:);
         h = (hmin+(hmax-hmin)*randh(i,:))/20;
         
+        tic
         % computation of the system stiffness matrix and force vector
         stiffness = ...
             formStiffnessMatrixMindlin_R(GDof,...
@@ -68,21 +70,23 @@ function cvis_truth(model)
 
         % solution
         displacements = solution(GDof,prescribedDof,stiffness,force);
+        t(i) = toc;
         
         [~,idx] = max(displacements(1:numberNodes));
         umax(i) = displacements(midNode);
-        t = toc;
         if idx ~= midNode
-            fprintf('iter: %d, time: %f, idx ~= midNode\n',i,t);
+            fprintf('iter: %d, time: %f, idx ~= midNode\n',i,t(i));
         else
-            fprintf('iter: %d, time: %f, idx = midNode\n',i,t);
+            fprintf('iter: %d, time: %f, idx = midNode\n',i,t(i));
         end
     end
     
     if model == 0
         writematrix(umax,fullfile(repath,'umax_30x30_midNode.txt'));
+        writematrix(t,fullfile(repath,'t_30x30_midNode.txt'));
     elseif model == 1
         writematrix(umax,fullfile(repath,'umax_10x10_midNode.txt'));
+        writematrix(t,fullfile(repath,'t_10x10_midNode.txt'));
     end
     
     m = max(umax(:));
