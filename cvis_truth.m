@@ -54,7 +54,7 @@ function cvis_truth(model)
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
     repath = fullfile(filepath,'results');
     
-    parfor i = 1:10
+    parfor i = 1:nsamples
         tic
         % computation of the system stiffness matrix and force vector
         stiffness = ...
