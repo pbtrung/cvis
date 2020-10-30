@@ -52,8 +52,7 @@ function cvis_truth(model)
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
     repath = fullfile(filepath,'results');
     
-    parfor i = 1:nsamples
-        tic
+    parfor i = 1:2
         P = Pmin+(Pmax-Pmin)*randP(i,:);
         h = (hmin+(hmax-hmin)*randh(i,:))/20;
         
