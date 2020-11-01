@@ -11,8 +11,8 @@ function cvis_truth(model)
     % mesh generation
     L = 1;
     if model == 0
-        numberElementsX = 30;
-        numberElementsY = 30;
+        numberElementsX = 20;
+        numberElementsY = 20;
     elseif model == 1
         numberElementsX = 10;
         numberElementsY = 10;
@@ -80,8 +80,8 @@ function cvis_truth(model)
     end
     
     if model == 0
-        writematrix(umax,fullfile(repath,'umax_30x30_midNode.txt'));
-        writematrix(t,fullfile(repath,'t_30x30_midNode.txt'));
+        writematrix(umax,fullfile(repath,'umax_20x20_midNode.txt'));
+        writematrix(t,fullfile(repath,'t_20x20_midNode.txt'));
     elseif model == 1
         writematrix(umax,fullfile(repath,'umax_10x10_midNode.txt'));
         writematrix(t,fullfile(repath,'t_10x10_midNode.txt'));
@@ -98,8 +98,8 @@ function cvis_truth(model)
     end
 
     if model == 0
-        writematrix(lm',fullfile(repath,'plate_lm_30x30_midNode.txt'));
-        writematrix(Umean',fullfile(repath,'plate_Umean_30x30_midNode.txt'));
+        writematrix(lm',fullfile(repath,'plate_lm_20x20_midNode.txt'));
+        writematrix(Umean',fullfile(repath,'plate_Umean_20x20_midNode.txt'));
     elseif model == 1
         writematrix(lm',fullfile(repath,'plate_lm_10x10_midNode.txt'));
         writematrix(Umean',fullfile(repath,'plate_Umean_10x10_midNode.txt'));
