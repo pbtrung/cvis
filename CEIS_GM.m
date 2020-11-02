@@ -4,16 +4,19 @@ function [Pr, lv, N_tot, gamma_hat, samplesU, samplesX, k_fin, mu_hat, Si_hat, P
 ---------------------------------------------------------------------------
 Created by:
 Sebastian Geyer (s.geyer@tum.de)
-Matthias Willer (matthias.willer@tum.de)
+Matthias Willer
+Fong-Lin Wu
 Engineering Risk Analysis Group
 Technische Universitat Munchen
-www.era.bgu.tum.de
+www.bgu.tum.de/era
+Contact: Antonios Kamariotis (antonis.kamariotis@tum.de)
 ---------------------------------------------------------------------------
-Version 2018-05
+Version 2020-10
+* Adaptation to new ERANataf class
 ---------------------------------------------------------------------------
 Comments:
-* The LSF must be coded to accept the full set of samples and no one by one
-  (see line 97)
+* Remove redundant dimension adjustment of limit state function. It should
+  be restricted in the main script
 * The CE method in combination with a Gaussian Mixture model can only be
   applied for low-dimensional problems, since its accuracy decreases
   dramatically in high dimensions.
@@ -65,7 +68,7 @@ end
 G_LSF = @(u) g_fun(u2x(u));
 
 %% Initialization of variables and storage
-j      = 0;        % initial level
+% j      = 0;        % initial level
 max_it = 50;       % maximum number of iterations
 N_tot  = 0;        % total number of samples
 k      = k_init;   % number of Gaussians in mixture
@@ -88,13 +91,13 @@ Pi_hat       = Pi_init;
 for j = 1:max_it
     % Generate samples
     X           = GM_sample(mu_hat, Si_hat, Pi_hat, N);
-    samplesU{j} = X';
+    samplesU{j} = X;
     
     % Count generated samples
     N_tot = N_tot+N;
     
     % Evaluation of the limit state function
-    geval = G_LSF(X');
+    geval = G_LSF(X);
     
     % Calculating h for the likelihood ratio
     h = h_calc(X,mu_hat,Si_hat,Pi_hat);
@@ -129,18 +132,20 @@ lv     = j;
 k_fin = k;
 gamma_hat(lv+1:end) = [];
 
+%% Fix and remove on 03.2020
 % adjust the dimension
-[mm,nn] = size(geval);
-if mm > nn
-    geval = geval';
-end
+% [mm,nn] = size(geval);
+% if mm > nn
+%     geval = geval';
+% end
 
 %% Calculation of the Probability of failure
 W_final = mvnpdf(X, zeros(1,dim), eye(dim))./h;
-I_final = (geval <=0 );
-Pr      = 1/N*sum(I_final*W_final)
+I_final = (geval <= 0);
+% Pr      = 1/N*sum(I_final*W_final);
+Pr      = 1/N*sum(I_final.*W_final)
 
-%% transform the samples to the physical/original space
+%% Transform the samples to the physical/original space
 samplesX = cell(lv,1);
 for i = 1:lv
     samplesX{i} = u2x(samplesU{i});

@@ -46,7 +46,7 @@ function cvis_ce_mc()
     k_init = 5;       % initial number of distributions in the Mixture models (GM/vMFNM)
     
     % limit state function
-    g = @(x) Q1(x');
+    g = @(x) Q1(x);
     [~,~,~,~,~,~,~,mu_hat,Si_hat,Pi_hat] = CEIS_GM(N,p,g,pi_pdf,k_init);
     gm = gmdistribution(mu_hat,Si_hat,Pi_hat);
     qce = @(x) pdf(gm,x);

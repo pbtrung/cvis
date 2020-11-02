@@ -24,8 +24,8 @@ P = -1;
 
 % mesh generation
 L = 1;
-numberElementsX = 30;
-numberElementsY = 30;
+numberElementsX = 10;
+numberElementsY = 10;
 numberElements = numberElementsX*numberElementsY;
 %
 [nodeCoordinates, elementNodes] = ...
@@ -55,11 +55,11 @@ GDof = 3*numberNodes;
 displacements = solution(GDof,prescribedDof,stiffness,force);
 
 % displacements
-disp('Displacements')
-jj = 1:GDof; format
-f = [jj; displacements'];
-fprintf('node U\n')
-fprintf('%3d %12.8f\n',f)
+% disp('Displacements')
+% jj = 1:GDof; format
+% f = [jj; displacements'];
+% fprintf('node U\n')
+% fprintf('%3d %12.8f\n',f)
 
 format long
 D1 = E*thickness^3/12/(1-poisson^2);

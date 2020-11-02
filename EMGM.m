@@ -4,12 +4,12 @@ function [mu, si, pi] = EMGM(X,W,nGM)
 ---------------------------------------------------------------------------
 Created by:
 Sebastian Geyer (s.geyer@tum.de)
-Matthias Willer (matthias.willer@tum.de)
+Fong-Lin Wu
 Engineering Risk Analysis Group
 Technische Universitat Munchen
-www.era.bgu.tum.de
+www.bgu.tum.de/era
 ---------------------------------------------------------------------------
-Version 2018-05
+Version 2020-02
 ---------------------------------------------------------------------------
 Input:
 * X   : input samples
