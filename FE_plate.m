@@ -45,7 +45,7 @@ function wmax = FE_plate(nelx,nely,E,poisson,kapa,L,x)
         displacements = solution(GDof,prescribedDof,stiffness,force);
         wmax(i) = displacements(midNode);
         t = toc;
-%         fprintf('iter: %d, time: %f\n',i,t);
+        fprintf('iter: %d, time: %f\n',i,t);
     end
     
 end
