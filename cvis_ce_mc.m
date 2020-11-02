@@ -55,6 +55,9 @@ function cvis_ce_mc()
     s_MC = random(gm, n_MC);
     writematrix(s_MC, fullfile(repath,'s_MC.txt'));
     
+    mu = zeros(1,d);
+    stdd = eye(d);
+    
     w0_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
     writematrix(w0_MC, fullfile(repath,'w0_MC.txt'));
     w1_MC = mvnpdf(s_MC,mu,stdd)./qce(s_MC);
