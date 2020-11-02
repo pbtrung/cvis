@@ -30,6 +30,7 @@ function wmax = FE_plate(nelx,nely,E,poisson,kapa,L,x)
     
     wmax(1:nsamples,1) = 0;
     parfor i = 1:nsamples
+        tic
         % computation of the system stiffness matrix and force vector
         stiffness = ...
             formStiffnessMatrixMindlin_R(GDof,...
@@ -43,6 +44,8 @@ function wmax = FE_plate(nelx,nely,E,poisson,kapa,L,x)
         % solution
         displacements = solution(GDof,prescribedDof,stiffness,force);
         wmax(i) = displacements(midNode);
+        t = toc;
+        fprintf('iter: %d, time: %f\n',i,t);
     end
     
 end
