@@ -10,8 +10,8 @@ function cvis_ce_mc()
     L = 1;
     
     %%
-    nelx0 = 20;
-    nely0 = 20;
+    nelx0 = 30;
+    nely0 = 30;
     nelx1 = 10;
     nely1 = 10;
     if nelx0 ~= nely0 || mod(nelx0,2) ~= 0 || nelx1 ~= nely1 || mod(nelx1,2) ~= 0
