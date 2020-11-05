@@ -15,9 +15,7 @@ function cvis_ce_acv_en()
     
     prob0 = 1-normcdf(l0);
     prob1 = 1-normcdf(l1);
-    
-    a = linspace(-1.5,0.5,33);
-    
+        
     % definition of the random variables
     d      = 1;
     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
@@ -77,7 +75,6 @@ function cvis_ce_acv_en()
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
-    r1 = (n1_IS+m1_IS)/n0_IS;
     
     n0_IS_EN = fix(n0_IS/nbatches);
     n1_IS_EN = fix(n1_IS/nbatches);
