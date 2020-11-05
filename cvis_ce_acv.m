@@ -6,9 +6,9 @@ function cvis_ce_acv()
     a = linspace(-1.5,0.5,33);
     
     [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
-    repath = fullfile(filepath,'results');
+    repath = fullfile(filepath,'results','Example 3');
     
-    n_MC = 3*10^5;
+    n_MC = 4*10^5;
     wQ0s_MC = readmatrix(fullfile(repath,'wQ0s_MC.txt'));
     wQ1s_MC = readmatrix(fullfile(repath,'wQ1s_MC.txt'));
     
@@ -30,7 +30,7 @@ function cvis_ce_acv()
     v_CV = v_MC_Q0_CV + a.^2*v_MC_Q1_CV + 2*a*cov_MC_Q0Q1_CV(1,2);
     
     %%
-    r = 2.5;
+    r = 4;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
@@ -73,7 +73,7 @@ function cvis_ce_acv()
         'FontSize',fontsize,...
         'FontName','Times',...
         'Location','Best')
-    ylim([0.35 2.75]);
+    ylim([0.55 3.6]);
     ylabel('Variance ratio',...
         'FontUnits','points',...
         'interpreter','latex',...
