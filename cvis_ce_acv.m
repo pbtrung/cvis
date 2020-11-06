@@ -40,7 +40,7 @@ function cvis_ce_acv(path)
     wQ0s_MC = w_MC.*Q0s_MC;
     
     % c1 = c*c2
-    c = 10;
+    c = 40;
     
     %%
     n0_CV = fix(n_MC*c/(c+1));
@@ -58,20 +58,24 @@ function cvis_ce_acv(path)
     cov_MC_Q0Q1_CV = cov_Q0Q1_CV/n0_CV;
     v_MC_Q0_CV = cov_MC_Q0Q1_CV(1,1);
     v_MC_Q1_CV = cov_MC_Q0Q1_CV(2,2);
+    astar = -cov_MC_Q0Q1_CV(1,2)/v_MC_Q1_CV;
     v_CV = v_MC_Q0_CV + a.^2*v_MC_Q1_CV + 2*a*cov_MC_Q0Q1_CV(1,2);
+    v_CV_min = v_MC_Q0_CV + astar^2*v_MC_Q1_CV + 2*astar*cov_MC_Q0Q1_CV(1,2);
+    disp('v_CV_min/v0_MC');
+    disp(v_CV_min/v0_MC);
     
-    m0_CV = mean(wQ0s_CV);
-    m1_CV = mean(wQ1s_CV);
-    m_CV = m0_CV + a*(m1_CV-prob1);
-    disp('prob0/m_CV');
-    disp(abs(prob0-m_CV')/prob0*100);
-    % from cvis_truth
-    m_naive = 0.00134859;
-    disp('prob0/m_naive');
-    disp(abs(prob0-m_naive)/prob0*100);
+%     m0_CV = mean(wQ0s_CV);
+%     m1_CV = mean(wQ1s_CV);
+%     m_CV = m0_CV + a*(m1_CV-prob1);
+%     disp('prob0/m_CV');
+%     disp(abs(prob0-m_CV')/prob0*100);
+%     % from cvis_truth
+%     m_naive = 0.00134859;
+%     disp('prob0/m_naive');
+%     disp(abs(prob0-m_naive)/prob0*100);
     
     %%
-    r = 2.5;
+    r = 4;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
@@ -96,26 +100,28 @@ function cvis_ce_acv(path)
     v_MC_Q1_IS = cov_MC_Q0Q1_IS(2,2);
     v_IS = v_MC_Q0_IS + a.^2*(v_MC_Q1_IS*((r1-1)/r1)) + 2*a*(cov_MC_Q0Q1_IS(1,2)*((r1-1)/r1));
     
-    m0s_IS = mean(wQ0s_IS);
-    m1s_IS = mean(wQ1s_IS);
-    mu1s_IS = (sum(wQ1s_IS) + sum(wmu_IS))/(n1_IS + m1_IS);
-    m_IS = m0s_IS + a*(m1s_IS-mu1s_IS);
-    disp('prob0/m_IS');
-    disp(abs(prob0-m_IS')/prob0*100);
+%     m0s_IS = mean(wQ0s_IS);
+%     m1s_IS = mean(wQ1s_IS);
+%     mu1s_IS = (sum(wQ1s_IS) + sum(wmu_IS))/(n1_IS + m1_IS);
+%     m_IS = m0s_IS + a*(m1s_IS-mu1s_IS);
+%     disp('prob0/m_IS');
+%     disp(abs(prob0-m_IS')/prob0*100);
     
 %     disp('v_CV/v0_MC');
 %     disp(v_CV'/v0_MC);
 %     disp('v_IS/v0_MC');
 %     disp(v_IS'/v0_MC);
     
+    disp("min(v_CV'/v0_MC)");
     disp(min(v_CV'/v0_MC));
+    disp("min(v_IS'/v0_MC)");
     disp(min(v_IS'/v0_MC));
     % from cvis_truth
     v_naive = 1.346771318479568e-11;
     disp(v_naive/v0_MC);
     disp(max(v_naive./v_CV'));
     disp(max(v_naive./v_IS'));
-    
+        
     %%
     set(0,'defaultLineLineWidth',0.7);
     set(0,'defaultLineMarkerSize',2);
@@ -125,9 +131,9 @@ function cvis_ce_acv(path)
     
     % from cvis_ce_acv_en nbatches = 1000
     % v_CV_EN/v0_MC
-    v_CV_EN__MC = 0.468136470357693;
+    v_CV_EN__MC = 0.455375948484369;
     % v_IS_EN/v0_MC
-    v_IS_EN__MC = 0.611068448301533;
+    v_IS_EN__MC = 0.668827766353937;
     
     figs(1) = figure('Units','inches',...
         'Position',[0 0 width height],...
