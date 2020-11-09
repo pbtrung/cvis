@@ -40,7 +40,7 @@ function cvis_ce_acv(path)
     wQ0s_MC = w_MC.*Q0s_MC;
     
     % c1 = c*c2
-    c = 40;
+    c = 20;
     
     %%
     n0_CV = fix(n_MC*c/(c+1));
@@ -75,7 +75,7 @@ function cvis_ce_acv(path)
 %     disp(abs(prob0-m_naive)/prob0*100);
     
     %%
-    r = 4;
+    r = 3;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
@@ -131,9 +131,9 @@ function cvis_ce_acv(path)
     
     % from cvis_ce_acv_en nbatches = 1000
     % v_CV_EN/v0_MC
-    v_CV_EN__MC = 0.455375948484369;
+    v_CV_EN__MC = 0.438409604353696;
     % v_IS_EN/v0_MC
-    v_IS_EN__MC = 0.668827766353937;
+    v_IS_EN__MC = 0.744115052716377;
     
     figs(1) = figure('Units','inches',...
         'Position',[0 0 width height],...

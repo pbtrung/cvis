@@ -1,4 +1,4 @@
-function cvis_ce_acv_en()
+function cvis_ce_acv_en_out()
 
     format long;
     rng('default');
@@ -41,7 +41,7 @@ function cvis_ce_acv_en()
     nbatches = 1000;
     
     % c0 = c*c1
-    c = 40;
+    c = 20;
     
     %%
     n0_CV = fix(n_MC*c/(c+1));
@@ -72,7 +72,7 @@ function cvis_ce_acv_en()
     disp(v_CV_EN/v0_MC);
     
     %%
-    r = 4;
+    r = 3;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
