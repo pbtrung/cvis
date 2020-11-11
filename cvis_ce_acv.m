@@ -1,4 +1,4 @@
-function cvis_ce_acv(path)
+function cvis_ce_acv()
 
     format long;
     rng('default');
@@ -75,7 +75,7 @@ function cvis_ce_acv(path)
 %     disp(abs(prob0-m_naive)/prob0*100);
     
     %%
-    r = 3;
+    r = 3.5;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
@@ -131,9 +131,9 @@ function cvis_ce_acv(path)
     
     % from cvis_ce_acv_en nbatches = 1000
     % v_CV_EN/v0_MC
-    v_CV_EN__MC = 0.438409604353696;
+    v_CV_EN__MC = 0.443343782591367;
     % v_IS_EN/v0_MC
-    v_IS_EN__MC = 0.744115052716377;
+    v_IS_EN__MC = 0.721092749157690;
     
     figs(1) = figure('Units','inches',...
         'Position',[0 0 width height],...
@@ -165,7 +165,7 @@ function cvis_ce_acv(path)
         'FontWeight','normal',...
         'FontSize',fontsize,...
         'FontName','Times')
-    fn(1) = "v_ACV__v0_MC.eps";
+    fn(1) = "v_ACV__v0_MC_20.eps";
     hold off
     
 %     figs(2) = figure('Units','inches',...
@@ -233,9 +233,12 @@ function cvis_ce_acv(path)
     fn(2) = 'qce.eps';
     hold off
     
+    [filepath,~,~] = fileparts(matlab.desktop.editor.getActiveFilename);
+    repath = fullfile(filepath,'results');
+    
     for k = 1:length(figs)
         % print each figure in figs to a separate .eps file
-        print(figs(k), '-depsc2', sprintf('%s', append(path,fn(k))))
+        print(figs(k), '-depsc2', fullfile(repath,fn(k)))
     end
     
 end

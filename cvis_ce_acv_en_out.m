@@ -72,7 +72,7 @@ function cvis_ce_acv_en_out()
     disp(v_CV_EN/v0_MC);
     
     %%
-    r = 3;
+    r = 3.5;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
