@@ -1,4 +1,4 @@
-function cvis_ce_acv_en_out()
+function [v_CV_EN,v_IS_EN] = cvis_ce_acv_en_out(c,r)
 
     format long;
     rng('default');
@@ -41,7 +41,7 @@ function cvis_ce_acv_en_out()
     nbatches = 1000;
     
     % c0 = c*c1
-    c = 20;
+    % c = 20;
     
     %%
     n0_CV = fix(n_MC*c/(c+1));
@@ -68,11 +68,10 @@ function cvis_ce_acv_en_out()
     v_MC_Q1_CV_EN = cov_MC_Q0Q1_CV_EN(2,2);
     astar = -cov_MC_Q0Q1_CV_EN(1,2)/v_MC_Q1_CV_EN;
     v_CV_EN = v_MC_Q0_CV_EN + astar^2*v_MC_Q1_CV_EN + 2*astar*cov_MC_Q0Q1_CV_EN(1,2);
-    disp('v_CV_EN/v0_MC');
-    disp(v_CV_EN/v0_MC);
+    v_CV_EN = v_CV_EN/v0_MC;
     
     %%
-    r = 3.5;
+    % r = 2.5;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
@@ -97,7 +96,7 @@ function cvis_ce_acv_en_out()
         mu1_IS_EN = Q1(s_mu_IS_EN(:))<0;
         w1_mu_IS_EN = mvnpdf(s_mu_IS_EN,mu,std)./qce(s_mu_IS_EN);
         wmu_IS_EN = w1_mu_IS_EN.*mu1_IS_EN;
-        mu1_IS(i) = (sum(wQ1s_IS_EN) + sum(wmu_IS_EN))/(n1_IS_EN + m1_IS_EN);
+        mu1_IS(i) = (sum(w1_IS_EN.*Q1s_IS_EN) + sum(wmu_IS_EN))/(n1_IS_EN + m1_IS_EN);
     end
     
     cov_Q0Q1_IS_EN = cov(wQ0s_IS_EN,wQ1s_IS_EN);
@@ -112,8 +111,7 @@ function cvis_ce_acv_en_out()
     v_IS_EN = v_MC_Q0_IS_EN +...
         astar^2*(v_MC_Q1_IS_EN + v_MC_mu1_IS_EN - 2*cov_MC_Q1mu1_IS_EN(1,2))...
         + 2*astar*(cov_MC_Q0Q1_IS_EN(1,2)-cov_MC_Q0mu1_IS_EN(1,2));
-    disp('v_IS_EN/v0_MC');
-    disp(v_IS_EN/v0_MC);
+    v_IS_EN = v_IS_EN/v0_MC;
     
 %     plot(nbatches_IS,var_ratios,'-o')
     

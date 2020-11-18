@@ -40,7 +40,7 @@ function cvis_ce_acv()
     wQ0s_MC = w_MC.*Q0s_MC;
     
     % c1 = c*c2
-    c = 20;
+    c = 30;
     
     %%
     n0_CV = fix(n_MC*c/(c+1));
@@ -130,10 +130,7 @@ function cvis_ce_acv()
     height = 2.5;
     
     % from cvis_ce_acv_en nbatches = 1000
-    % v_CV_EN/v0_MC
-    v_CV_EN__MC = 0.443343782591367;
-    % v_IS_EN/v0_MC
-    v_IS_EN__MC = 0.721092749157690;
+    [v_CV_EN__MC,v_IS_EN__MC] = cvis_ce_acv_en_out(c,r);
     
     figs(1) = figure('Units','inches',...
         'Position',[0 0 width height],...
