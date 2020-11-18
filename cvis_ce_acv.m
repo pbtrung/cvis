@@ -88,11 +88,6 @@ function cvis_ce_acv()
     w1_IS = mvnpdf(s_MC(1:n1_IS),mu,std)./qce(s_MC(1:n1_IS));
     wQ1s_IS = w1_IS.*Q1s_IS;
     
-    s_mu_IS = random(gm, m1_IS);
-    mu1_IS = Q1(s_mu_IS)<0;
-    w1_mu_IS = mvnpdf(s_mu_IS,mu,std)./qce(s_mu_IS);
-    wmu_IS = w1_mu_IS.*mu1_IS;
-    
     %%
     cov_Q0Q1_IS = cov(wQ0s_IS,wQ1s_IS);
     cov_MC_Q0Q1_IS = cov_Q0Q1_IS/n0_IS;
