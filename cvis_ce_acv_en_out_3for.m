@@ -42,7 +42,7 @@ function cvis_ce_acv_en_out_3for()
     nbatches = 4;
     
     % c0 = c*c1
-    c = 20;
+    c = 30;
     
     %%
     n0_CV = fix(n_MC*c/(c+1));
@@ -75,7 +75,7 @@ function cvis_ce_acv_en_out_3for()
     disp(v_CV_EN/v0_MC);
     
     %%
-    r = 4;
+    r = 3.5;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
