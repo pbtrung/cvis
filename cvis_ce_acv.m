@@ -125,7 +125,7 @@ function cvis_ce_acv()
     height = 2.5;
     
     % from cvis_ce_acv_en nbatches = 1000
-    [v_CV_EN__MC,v_IS_EN__MC] = cvis_ce_acv_en_out(c,r);
+    [v_CV_EN__MC,v_IS_EN__MC] = cvis_ce_acv_en_out(c,r,1000);
     v_CV_EN__MC_3for = 0.763171802502491;
     v_IS_EN__MC_3for = 0.934273161041501;
     
@@ -149,7 +149,7 @@ function cvis_ce_acv()
         'FontSize',fontsize,...
         'FontName','Times',...
         'Location','Best')
-    ylim([0.40 2.5]);
+    ylim([0.1 2.5]);
     ylabel('Variance ratio',...
         'FontUnits','points',...
         'interpreter','latex',...

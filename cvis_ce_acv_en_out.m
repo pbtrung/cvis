@@ -1,4 +1,4 @@
-function [v_CV_EN,v_IS_EN] = cvis_ce_acv_en_out(c,r)
+function [v_CV_EN,v_IS_EN] = cvis_ce_acv_en_out(c,r,nbatches)
 
     format long;
     rng('default');
@@ -37,11 +37,8 @@ function [v_CV_EN,v_IS_EN] = cvis_ce_acv_en_out(c,r)
     w_MC = mvnpdf(s_MC,mu,std)./qce(s_MC);
     wQ0s_MC = w_MC.*Q0s_MC;
     v0_MC = var(wQ0s_MC)/n_MC;
-    
-    nbatches = 1000;
-    
+        
     % c0 = c*c1
-    % c = 20;
     
     %%
     n0_CV = fix(n_MC*c/(c+1));
@@ -71,7 +68,6 @@ function [v_CV_EN,v_IS_EN] = cvis_ce_acv_en_out(c,r)
     v_CV_EN = v_CV_EN/v0_MC;
     
     %%
-    % r = 2.5;
     n0_IS = fix(n_MC*c/(c+r+1));
     n1_IS = n0_IS;
     m1_IS = fix(r*n0_IS);
