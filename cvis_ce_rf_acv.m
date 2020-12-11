@@ -19,7 +19,7 @@ function cvis_ce_rf_acv()
     n0_CV = fix(n_MC*c/(c+1));
     n1_CV = n0_CV;
     
-    wQ0s_CV = wQ0s_MC(1:n0_CV);
+    wQ0s_CV = wQ0s_MC(1:n0_CV); 
     wQ1s_CV = wQ1s_MC(1:n1_CV);
     
     v0_MC = var(wQ0s_MC(1:n_MC))/n_MC;
