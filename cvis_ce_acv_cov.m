@@ -13,11 +13,9 @@ function cov_Q0Q1 = cvis_ce_acv_cov()
     Q0 = @(x) l0-x;
     Q1 = @(x) l1-x;
     
-    prob0 = 1-normcdf(l0);
-    prob1 = 1-normcdf(l1);
-    
-    a = linspace(-1.5,0.5,33);
-    
+%     prob0 = 1-normcdf(l0);
+%     prob1 = 1-normcdf(l1);
+        
     % definition of the random variables
     d      = 1;
     pi_pdf = repmat(ERADist('standardnormal','PAR'),d,1);
@@ -34,7 +32,7 @@ function cov_Q0Q1 = cvis_ce_acv_cov()
     qce = @(x) pdf(gm,x);
         
     %%
-    n0_CV = 10^7;
+    n0_CV = 10^6;
     n1_CV = n0_CV;
         
     s_MC = random(gm, n0_CV);
