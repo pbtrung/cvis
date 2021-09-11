@@ -43,8 +43,8 @@ function [cov_Q0Q1, rho] = cvis_ce_acv_cov()
     w1_CV = mvnpdf(s_MC(1:n1_CV),mu,std)./qce(s_MC(1:n1_CV));
     wQ1s_CV = w1_CV.*Q1s_CV;
     cov_Q0Q1_MC = cov(wQ0s_CV,wQ1s_CV);
-    cov_Q0Q1 = cov_Q0Q1_MC(1,2);
+    cov_Q0Q1 = cov_Q0Q1_MC(1,2)
     
-    rho = cov_Q0Q1_MC(1,2)/(cov_Q0Q1_MC(1,1)*cov_Q0Q1_MC(2,2));
+    rho = cov_Q0Q1_MC(1,2)/sqrt(cov_Q0Q1_MC(1,1)*cov_Q0Q1_MC(2,2))
     
 end
