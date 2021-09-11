@@ -1,4 +1,4 @@
-function cov_Q0Q1 = cvis_ce_acv_cov()
+function [cov_Q0Q1, rho] = cvis_ce_acv_cov()
 
     format long;
     rng('default');
@@ -42,7 +42,9 @@ function cov_Q0Q1 = cvis_ce_acv_cov()
     Q1s_CV = Q1(s_MC(1:n1_CV))<0;
     w1_CV = mvnpdf(s_MC(1:n1_CV),mu,std)./qce(s_MC(1:n1_CV));
     wQ1s_CV = w1_CV.*Q1s_CV;
-    cov_Q0Q1_CV = cov(wQ0s_CV,wQ1s_CV);
-    cov_Q0Q1 = cov_Q0Q1_CV(1,2);
+    cov_Q0Q1_MC = cov(wQ0s_CV,wQ1s_CV);
+    cov_Q0Q1 = cov_Q0Q1_MC(1,2);
+    
+    rho = cov_Q0Q1_MC(1,2)/(cov_Q0Q1_MC(1,1)*cov_Q0Q1_MC(2,2));
     
 end
